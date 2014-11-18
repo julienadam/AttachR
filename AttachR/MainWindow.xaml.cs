@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.IO;
 using System.Windows;
+using AttachR.Components;
 using AttachR.Engine;
 using AttachR.Models;
 using Microsoft.Win32;
@@ -13,6 +14,7 @@ namespace AttachR
     /// </summary>
     public partial class MainWindow : Window
     {
+        private const string FILE_DIALOG_FILTERS = "Debug profiles|*.dpf|All Files|*.*";
         private readonly Maestro maestro = new Maestro();
         private readonly FileManager fileManager = new FileManager();
 
@@ -21,6 +23,9 @@ namespace AttachR
             get { return ((Model)DataContext); }
             set { DataContext = value; }
         }
+
+        public MainWindow() : this(null)
+        { }
 
         public MainWindow(string path)
         {
@@ -86,9 +91,10 @@ namespace AttachR
         {
             var dialog = new OpenFileDialog
             {
-                Filter = "*.dpf|Debug profiles|*.*|All Files",
+                Filter = FILE_DIALOG_FILTERS,
                 CheckFileExists = true,
-                CheckPathExists = true
+                CheckPathExists = true,
+                FilterIndex = 0,
             };
 
             if (dialog.ShowDialog() == true)
@@ -104,9 +110,18 @@ namespace AttachR
 
         private void MenuItem_Save_OnClick(object sender, RoutedEventArgs e)
         {
+            Save();
+        }
+
+        private void Save()
+        {
             if (Model.FileName != null)
             {
                 SaveAs();
+            }
+            else
+            {
+                Save(Model.FileName);
             }
         }
 
@@ -122,7 +137,8 @@ namespace AttachR
                 AddExtension = true,
                 ValidateNames = true,
                 CheckPathExists = true,
-                Filter = "*.dpf|Debug profiles|*.*|All Files",
+                Filter = FILE_DIALOG_FILTERS,
+                FilterIndex = 0,
             };
 
             if (d.ShowDialog() == true)
@@ -141,7 +157,29 @@ namespace AttachR
             {
                 Model.Error = string.Format("Could not save file to {0}. Error was : {1}", fileName, ex.Message);
             }
-           
+        }
+
+        private void MenuItem_New_OnClick(object sender, RoutedEventArgs e)
+        {
+            ValidateDataLoss();
+            Model.Clear();
+        }
+
+        private void ValidateDataLoss()
+        {
+            if (!Model.IsDirty) return;
+
+            if (MessageBox.Show(
+                "Do you want to save your changes?\r\nYes to save and continue\r\nNo to continue without saving",
+                "Confirm", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+            {
+                Save();
+            }
+        }
+
+        private void MainWindow_OnClosing(object sender, CancelEventArgs e)
+        {
+            ValidateDataLoss();
         }
     }
 }

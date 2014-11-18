@@ -2,8 +2,9 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:local="clr-namespace:AttachR.Models"
-        xmlns:a="clr-namespace:AttachR"
-        Title="MainWindow" Height="450" Width="900">
+        xmlns:components="clr-namespace:AttachR.Components"
+        Title="AttachR" Height="450" Width="900"
+        Closing="MainWindow_OnClosing">
 
     <Window.DataContext>
         <local:Model>
@@ -21,10 +22,11 @@
     <DockPanel>
         <Menu Height="25" VerticalAlignment="Top" DockPanel.Dock="Top">
             <MenuItem Header="_File">
+                <MenuItem Header="_New" Click="MenuItem_New_OnClick"></MenuItem>
                 <MenuItem Header="_Open..." Click="MenuItem_Open_OnClick"></MenuItem>
                 <MenuItem Header="_Save" Click="MenuItem_Save_OnClick"></MenuItem>
                 <MenuItem Header="_Save as..." Click="MenuItem_SaveAs_OnClick"></MenuItem>
-                <a:RecentFileList x:Name="RecentFileList" MenuClick="RecentFileList_OnMenuClick"/>
+                <components:RecentFileList x:Name="RecentFileList" MenuClick="RecentFileList_OnMenuClick"/>
                 <Separator />
                 <MenuItem Header="_Exit" Click="MenuItem_Exit_OnClick"></MenuItem>
             </MenuItem>

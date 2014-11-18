@@ -2,7 +2,8 @@
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
-using System.Windows.Media.Imaging;
+using System.Windows.Media;
+using Newtonsoft.Json;
 
 namespace AttachR.Models
 {
@@ -11,8 +12,18 @@ namespace AttachR.Models
         private string executable;
         private string commandLineArguments;
         private Process currentProcess;
+        private ImageSource icon;
 
-        public BitmapImage Icon { get; set; }
+        [JsonIgnore]
+        public ImageSource Icon
+        {
+            get { return icon; }
+            set
+            {
+                icon = value;
+                OnPropertyChanged();
+            }
+        }
 
         public string Executable
         {
@@ -22,6 +33,7 @@ namespace AttachR.Models
                 if (executable != value)
                 {
                     executable = value;
+                    Icon = IconLoader.LoadIcon(value);
                     OnPropertyChanged();
                 }
             }
@@ -42,6 +54,7 @@ namespace AttachR.Models
 
         public TimeSpan Delay { get; set; }
 
+        [JsonIgnore]
         public Process CurrentProcess
         {
             get { return currentProcess; }
@@ -57,6 +70,7 @@ namespace AttachR.Models
 
         public event PropertyChangedEventHandler PropertyChanged;
 
+        [JsonIgnore]
         public int? CurrentProcessId
         {
             get { return CurrentProcess != null ? CurrentProcess.Id : (int?) null; }

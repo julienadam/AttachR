@@ -9,7 +9,7 @@ using System.Windows.Controls;
 using System.Xml;
 using Microsoft.Win32;
 
-namespace AttachR
+namespace AttachR.Components
 {
 	public class RecentFileList : Separator
 	{

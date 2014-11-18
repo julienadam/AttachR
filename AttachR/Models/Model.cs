@@ -11,9 +11,48 @@ namespace AttachR.Models
         }
 
         private string error;
-        public DebuggingProfile DebuggingProfile { get; set; }
-        public string FileName { get; set; }
-        public bool IsDirty { get; set; }
+        private DebuggingProfile debuggingProfile;
+        private string fileName;
+        private bool isDirty;
+
+        public DebuggingProfile DebuggingProfile
+        {
+            get { return debuggingProfile; }
+            set
+            {
+                if (debuggingProfile != value)
+                {
+                    debuggingProfile = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        public string FileName
+        {
+            get { return fileName; }
+            set
+            {
+                if (fileName != value)
+                {
+                    fileName = value;
+                    OnPropertyChanged();
+                }
+            } 
+        }
+
+        public bool IsDirty
+        {
+            get { return isDirty; }
+            set
+            {
+                if (isDirty != value)
+                {
+                    isDirty = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
 
         public string Error
         {
@@ -34,6 +73,14 @@ namespace AttachR.Models
         {
             var handler = PropertyChanged;
             if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        public void Clear()
+        {
+            DebuggingProfile = new DebuggingProfile();
+            Error = "";
+            FileName = "";
+            IsDirty = false;
         }
     }
 }

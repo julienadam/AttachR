@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
+using Newtonsoft.Json;
 
 namespace AttachR.Models
 {
@@ -29,6 +30,8 @@ namespace AttachR.Models
         public BindingList<DebuggingTarget> Targets { get; set; }
         public Key StartHotkey { get; set; }
         public Key StopHotkey { get; set; }
+        
+        [JsonIgnore]
         public Process CurrentVisualStudioProcess { get; set; }
         public event PropertyChangedEventHandler PropertyChanged;
 
