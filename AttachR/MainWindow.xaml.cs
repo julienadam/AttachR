@@ -91,17 +91,10 @@ namespace AttachR
 
         private void MenuItem_Open_OnClick(object sender, RoutedEventArgs e)
         {
-            var dialog = new OpenFileDialog
+            var f = ShowOpenDialog("Debug profiles", ".dpf");
+            if (f != null)
             {
-                Filter = FILE_DIALOG_FILTERS,
-                CheckFileExists = true,
-                CheckPathExists = true,
-                FilterIndex = 0,
-            };
-
-            if (dialog.ShowDialog() == true)
-            {
-                FileOpenCore(dialog.FileName);
+                FileOpenCore(f);
             }
         }
 
@@ -182,6 +175,43 @@ namespace AttachR
         private void MainWindow_OnClosing(object sender, CancelEventArgs e)
         {
             ValidateDataLoss();
+        }
+
+        private void ButtonBrowseForSolution_OnClick(object sender, RoutedEventArgs e)
+        {
+            var f = ShowOpenDialog("Solution files", "*.sln");
+            if (f != null)
+            {
+                Model.FileName = f;
+            }
+        }
+
+        private void ButtonBrowseExe_OnClick(object sender, RoutedEventArgs e)
+        {
+            var f = ShowOpenDialog("Executable files", "*.exe");
+            if (f != null)
+            {
+                var context = (DebuggingTarget)((FrameworkElement)e.Source).DataContext;
+                context.Executable = f;
+            }
+        }
+
+        private static string ShowOpenDialog(string fileTypeDescription, string fileTypeExtension)
+        {
+            var d = new OpenFileDialog
+            {
+                Filter = string.Format("{0}|{1}|All files|*.*", fileTypeDescription, fileTypeExtension),
+                FilterIndex = 0,
+                CheckFileExists = true,
+                CheckPathExists = true,
+                ValidateNames = true,
+            };
+
+            if (d.ShowDialog() == true)
+            {
+                return d.FileName;
+            }
+            return null;
         }
     }
 }
