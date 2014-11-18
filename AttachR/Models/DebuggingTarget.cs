@@ -4,7 +4,7 @@ using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Windows.Media.Imaging;
 
-namespace AttachR.Profiles
+namespace AttachR.Models
 {
     public class DebuggingTarget : INotifyPropertyChanged
     {

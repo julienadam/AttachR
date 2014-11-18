@@ -1,8 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
 using System.ComponentModel;
+using System.IO;
 using System.Windows;
 using AttachR.Engine;
-using AttachR.Profiles;
+using AttachR.Models;
+using Microsoft.Win32;
 
 namespace AttachR
 {
@@ -12,54 +14,69 @@ namespace AttachR
     public partial class MainWindow : Window
     {
         private readonly Maestro maestro = new Maestro();
+        private readonly FileManager fileManager = new FileManager();
 
-        private DebuggingProfile DebuggingProfile
+        private Model Model
         {
-            get { return (DebuggingProfile)DataContext; }
+            get { return ((Model)DataContext); }
             set { DataContext = value; }
         }
 
-        public MainWindow()
+        public MainWindow(string path)
         {
             InitializeComponent();
-            DebuggingProfile = LoadLastProfile();
+            Model = new Model();
+
+            if (!string.IsNullOrEmpty(path))
+            {
+                FileOpenCore(path);
+            }
         }
 
-        private DebuggingProfile LoadLastProfile()
+        private void FileOpenCore(string filepath)
         {
-            DebuggingProfile result = new DebuggingProfile
+            if (string.IsNullOrEmpty(filepath))
             {
-                VisualStudioSolutionName = "RFQHub.sln",
-                Targets = new BindingList<DebuggingTarget>
-                {
-                    new DebuggingTarget
-                    {
-                        Executable =
-                            @"C:\Users\julien.adam\git\rfq-hub\bin\Ids.RfqHub.Client\Debug\Ids.RfqHub.Client.exe",
-                        CommandLineArguments =
-                            "-shorttitle=true -remoteaddress=https://julienadam.rfq-hub.com:555/RFQHubServer;https://julienadam.rfq-hub.com:556/RFQHubServer -login=sales1@DummyBank1 -password=test -delay=3 -exitnicely=true",
-                    }
-                }
-            };
+                return;
+            }
 
-            return result;
+            if (!File.Exists(filepath))
+            {
+                Model.Error = string.Format("Could not load data from {0}. File does not exist", filepath);
+                return;
+            }
+
+            try
+            {
+                // Load profile
+                Model.DebuggingProfile = fileManager.Open(filepath);
+                Model.IsDirty = false;
+                Model.FileName = filepath;
+                Model.Error = "";
+            }
+            catch(Exception ex)
+            {
+                Model.Error = string.Format("Could not load data from {0}. It might be corrupted. Error was : {1}", filepath, ex.Message);
+            }
         }
 
         private void ButtonRun_OnClick(object sender, RoutedEventArgs e)
         {
-            maestro.Run(DebuggingProfile);
+            try
+            {
+                maestro.Run(Model.DebuggingProfile);
+            }
+            catch(Exception ex)
+            {
+                Model.Error = string.Format("Could not run this configuration : {0}", ex.Message);
+            }
         }
 
         private void ButtonAdd_OnClick(object sender, RoutedEventArgs e)
         {
-            DebuggingProfile.Targets.Add(new DebuggingTarget());
+            Model.DebuggingProfile.Targets.Add(new DebuggingTarget());
         }
-
-        private void MainWindow_OnLoaded(object sender, RoutedEventArgs e)
-        {
-            
-        }
-
+        
         private void MenuItem_Exit_OnClick(object sender, RoutedEventArgs e)
         {
             Close();
@@ -67,7 +84,64 @@ namespace AttachR
 
         private void MenuItem_Open_OnClick(object sender, RoutedEventArgs e)
         {
-            
+            var dialog = new OpenFileDialog
+            {
+                Filter = "*.dpf|Debug profiles|*.*|All Files",
+                CheckFileExists = true,
+                CheckPathExists = true
+            };
+
+            if (dialog.ShowDialog() == true)
+            {
+                FileOpenCore(dialog.FileName);
+            }
+        }
+
+        private void RecentFileList_OnMenuClick(object sender, RecentFileList.MenuClickEventArgs e)
+        {
+            FileOpenCore(e.Filepath);
+        }
+
+        private void MenuItem_Save_OnClick(object sender, RoutedEventArgs e)
+        {
+            if (Model.FileName != null)
+            {
+                SaveAs();
+            }
+        }
+
+        private void MenuItem_SaveAs_OnClick(object sender, RoutedEventArgs e)
+        {
+            SaveAs();
+        }
+
+        private void SaveAs()
+        {
+            SaveFileDialog d = new SaveFileDialog
+            {
+                AddExtension = true,
+                ValidateNames = true,
+                CheckPathExists = true,
+                Filter = "*.dpf|Debug profiles|*.*|All Files",
+            };
+
+            if (d.ShowDialog() == true)
+            {
+                Save(d.FileName);
+            }
+        }
+
+        private void Save(string fileName)
+        {
+            try
+            {
+                fileManager.Save(fileName, Model.DebuggingProfile);
+            }
+            catch (Exception ex)
+            {
+                Model.Error = string.Format("Could not save file to {0}. Error was : {1}", fileName, ex.Message);
+            }
+           
         }
     }
 }

@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
 
 namespace AttachR
 {
@@ -13,5 +7,10 @@ namespace AttachR
     /// </summary>
     public partial class App : Application
     {
+        protected override void OnStartup(StartupEventArgs e)
+        {
+            MainWindow w = new MainWindow(e.Args.Length > 0 ? e.Args[0] : null);
+            w.Show();
+        }
     }
 }
