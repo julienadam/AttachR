@@ -27,10 +27,8 @@
                 <MenuItem Header="_Save" Click="MenuItem_Save_OnClick"></MenuItem>
                 <MenuItem Header="_Save as..." Click="MenuItem_SaveAs_OnClick"></MenuItem>
                 <components:RecentFileList x:Name="RecentFileList" MenuClick="RecentFileList_OnMenuClick"/>
-                <Separator />
                 <MenuItem Header="_Exit" Click="MenuItem_Exit_OnClick"></MenuItem>
             </MenuItem>
-
         </Menu>
 
         <Grid Width="Auto" Height="Auto" DockPanel.Dock="Top" >
@@ -44,13 +42,50 @@
             <Button Margin="3" Grid.Column="2" Grid.Row="0">...</Button>
         </Grid>
 
+        
+        <StatusBar DockPanel.Dock="Bottom" HorizontalContentAlignment="Stretch">
+            <StatusBar.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="35" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="35" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                    </Grid>
+                </ItemsPanelTemplate>
+            </StatusBar.ItemsPanel>
+
+            <StatusBarItem Grid.Column="0">
+                <TextBlock>File:</TextBlock>
+            </StatusBarItem>
+            <Separator Grid.Column="1" />
+            <StatusBarItem Grid.Column="2">
+                <TextBlock Text="{Binding Path=FileName}" />
+            </StatusBarItem>
+            <Separator Grid.Column="3" />
+            <StatusBarItem Grid.Column="4">
+                <TextBlock>Error:</TextBlock>
+            </StatusBarItem>
+            <Separator Grid.Column="5" />
+            <StatusBarItem Grid.Column="6">
+                <TextBlock Text="{Binding Path=Error}"></TextBlock>
+            </StatusBarItem>
+        </StatusBar>
+        
+        <Separator DockPanel.Dock="Bottom"></Separator>
+
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" DockPanel.Dock="Bottom">
             <Button Margin="5" Padding="5" Name="ButtonAdd" Click="ButtonAdd_OnClick">Add item</Button>
             <Button Margin="5" Padding="5" Name="ButtonRun" Click="ButtonRun_OnClick">_Run</Button>
         </StackPanel>
 
-        <GroupBox Name="GroupBox" Header="Executables to debug">
-            <ListBox DockPanel.Dock="Bottom" Height="Auto" ItemsSource="{Binding Path=DebuggingProfile.Targets, Mode=TwoWay}" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
+        <GroupBox Name="GroupBox" Header="Executables to debug" DockPanel.Dock="Bottom">
+            <ListBox  Height="Auto" ItemsSource="{Binding Path=DebuggingProfile.Targets, Mode=TwoWay}" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <DockPanel>
@@ -85,6 +120,6 @@
                 </ListBox.ItemTemplate>
             </ListBox>
         </GroupBox>
-
+        
     </DockPanel>
 </Window>

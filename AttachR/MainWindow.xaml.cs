@@ -38,30 +38,32 @@ namespace AttachR
             }
         }
 
-        private void FileOpenCore(string filepath)
+        private void FileOpenCore(string filePath)
         {
-            if (string.IsNullOrEmpty(filepath))
+            if (string.IsNullOrEmpty(filePath))
             {
                 return;
             }
 
-            if (!File.Exists(filepath))
+            if (!File.Exists(filePath))
             {
-                Model.Error = string.Format("Could not load data from {0}. File does not exist", filepath);
+                Model.Error = string.Format("Could not load data from {0}. File does not exist", filePath);
+                RecentFileList.RemoveFile(filePath);
                 return;
             }
 
             try
             {
                 // Load profile
-                Model.DebuggingProfile = fileManager.Open(filepath);
+                Model.DebuggingProfile = fileManager.Open(filePath);
                 Model.IsDirty = false;
-                Model.FileName = filepath;
+                Model.FileName = filePath;
                 Model.Error = "";
+                RecentFileList.InsertFile(filePath);
             }
             catch(Exception ex)
             {
-                Model.Error = string.Format("Could not load data from {0}. It might be corrupted. Error was : {1}", filepath, ex.Message);
+                Model.Error = string.Format("Could not load data from {0}. It might be corrupted. Error was : {1}", filePath, ex.Message);
             }
         }
 
