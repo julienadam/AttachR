@@ -3,16 +3,21 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:local="clr-namespace:AttachR.Models"
         xmlns:components="clr-namespace:AttachR.Components"
+        xmlns:attachR="clr-namespace:AttachR"
         Title="AttachR" Height="450" Width="900"
         Closing="MainWindow_OnClosing">
 
+    <Window.Resources>
+        <attachR:IsNullConverter x:Key="isNullConverter"/>
+    </Window.Resources>
+    
     <Window.DataContext>
         <local:Model>
             <local:Model.DebuggingProfile>
-                <local:DebuggingProfile VisualStudioSolutionName="SomeSolution.sln">
+                <local:DebuggingProfile VisualStudioSolutionPath="C:\Path\To\SomeSolution.sln">
                     <local:DebuggingProfile.Targets>
-                        <local:DebuggingTarget Executable="test.exe" CommandLineArguments="sample args" ></local:DebuggingTarget>
-                        <local:DebuggingTarget Executable="test2.exe" CommandLineArguments="sample args 2" ></local:DebuggingTarget>
+                        <local:DebuggingTarget Executable="C:\Path\To\some test.exe" CommandLineArguments="some args" />
+                        <local:DebuggingTarget Executable="C:\Path\To\some test2.exe" CommandLineArguments="some other args" />
                     </local:DebuggingProfile.Targets>
                 </local:DebuggingProfile>
             </local:Model.DebuggingProfile>
@@ -22,26 +27,48 @@
     <DockPanel>
         <Menu Height="25" VerticalAlignment="Top" DockPanel.Dock="Top">
             <MenuItem Header="_File">
-                <MenuItem Header="_New" Click="MenuItem_New_OnClick"></MenuItem>
-                <MenuItem Header="_Open..." Click="MenuItem_Open_OnClick"></MenuItem>
-                <MenuItem Header="_Save" Click="MenuItem_Save_OnClick"></MenuItem>
-                <MenuItem Header="_Save as..." Click="MenuItem_SaveAs_OnClick"></MenuItem>
-                <components:RecentFileList x:Name="RecentFileList" MenuClick="RecentFileList_OnMenuClick"/>
-                <MenuItem Header="_Exit" Click="MenuItem_Exit_OnClick"></MenuItem>
+                <MenuItem Header="_New" Click="MenuItem_New_OnClick" />
+                <MenuItem Header="_Open..." Click="MenuItem_Open_OnClick" />
+                <MenuItem Header="_Save" Click="MenuItem_Save_OnClick" />
+                <MenuItem Header="_Save as..." Click="MenuItem_SaveAs_OnClick" />
+                <components:RecentFileList x:Name="RecentFileList" MenuClick="RecentFileList_OnMenuClick" />
+                <MenuItem Header="_Exit" Click="MenuItem_Exit_OnClick" />
             </MenuItem>
         </Menu>
 
-        <Grid Width="Auto" Height="Auto" DockPanel.Dock="Top" >
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="60" />
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="40"/>
-            </Grid.ColumnDefinitions>
-            <Label Grid.Column="0" Grid.Row="0">Solution :</Label>
-            <TextBox Margin="3" Name="TextBoxSolution" Text="{Binding Path=DebuggingProfile.VisualStudioSolutionName, Mode=TwoWay}" Grid.Column="1" Grid.Row="0"></TextBox>
-            <Button Margin="3" Grid.Column="2" Grid.Row="0" Click="ButtonBrowseForSolution_OnClick">...</Button>
-        </Grid>
+        <GroupBox Name="GroupBoxSolution" Header="Visual Studio solution file" DockPanel.Dock="Top">
+            <Grid Width="Auto" Height="Auto">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="68" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="40" />
+                    <ColumnDefinition Width="68" />
+                </Grid.ColumnDefinitions>
+                <Label Grid.Column="0" Grid.Row="0">Solution :</Label>
+                <TextBox Margin="3" Name="TextBoxSolution" Text="{Binding Path=DebuggingProfile.VisualStudioSolutionPath, Mode=TwoWay}" Grid.Column="1" Grid.Row="0" />
+                <Button Margin="3" Grid.Column="2" Grid.Row="0" Click="ButtonBrowseForSolution_OnClick">...</Button>
 
+                <WrapPanel Grid.Column="3" Grid.Row="0" HorizontalAlignment="Center">
+                    <Button Click="ButtonOpenSolution_OnClick" Margin="0" HorizontalAlignment="Center" ToolTip="Start this application" Name="ButtonOpenSolution">
+                        <Button.Template>
+                            <ControlTemplate>
+                                <Border x:Name="theBorder" BorderBrush="Transparent" BorderThickness="2">
+                                    <Image Source="Media/glyphicons_151_new_window.png" Width="16" Height="18" Margin="4"/>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="BorderBrush" TargetName="theBorder" Value="LightGray" />
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
+
+                </WrapPanel>
+                
+
+            </Grid>
+        </GroupBox>
 
         <StatusBar DockPanel.Dock="Bottom" HorizontalContentAlignment="Stretch">
             <StatusBar.ItemsPanel>
@@ -73,11 +100,11 @@
             </StatusBarItem>
             <Separator Grid.Column="5" />
             <StatusBarItem Grid.Column="6">
-                <TextBlock Text="{Binding Path=Error}"></TextBlock>
+                <TextBlock Text="{Binding Path=Error}" />
             </StatusBarItem>
         </StatusBar>
 
-        <Separator DockPanel.Dock="Bottom"></Separator>
+        <Separator DockPanel.Dock="Bottom" />
 
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" DockPanel.Dock="Bottom">
             <Button Margin="5" Padding="5" Name="ButtonAdd" Click="ButtonAdd_OnClick">Add item</Button>
@@ -85,44 +112,106 @@
         </StackPanel>
 
         <GroupBox Name="GroupBox" Header="Executables to debug" DockPanel.Dock="Bottom">
-            <ListBox  Height="Auto" ItemsSource="{Binding Path=DebuggingProfile.Targets, Mode=TwoWay}" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
+            <ListBox Height="Auto" ItemsSource="{Binding Path=DebuggingProfile.Targets, Mode=TwoWay}"
+                     HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <DockPanel>
                             <Grid Width="Auto" Height="Auto" DockPanel.Dock="Top">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="60" />
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="40"/>
-                                    <ColumnDefinition Width="60"/>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="40" />
+                                    <ColumnDefinition Width="60" />
                                 </Grid.ColumnDefinitions>
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="30" />
                                     <RowDefinition Height="30" />
                                 </Grid.RowDefinitions>
 
-                                <Border Grid.Column="0" Grid.RowSpan="2" Grid.Row="0" Margin="3"
-                BorderBrush="White"
-                Background="GhostWhite"
-                BorderThickness="1,1,1,1"
-                CornerRadius="8,8,8,8">
-                                    <Image Source="{Binding Path=Icon, Mode=TwoWay}"></Image>
+                                <Border Grid.Column="0" Grid.RowSpan="2" Grid.Row="0" Margin="3" BorderBrush="White"
+                                        Background="GhostWhite" BorderThickness="1,1,1,1" CornerRadius="4,4,4,4">
+                                    <Image Source="{Binding Path=Icon, Mode=TwoWay}" />
                                     <Border.Effect>
                                         <DropShadowEffect Color="Gray" Opacity="0.5" />
                                     </Border.Effect>
+                                    <Border.Style>
+                                        <Style TargetType="{x:Type Border}">
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding Icon}" Value="{x:Null}">
+                                                    <Setter Property="Visibility" Value="Collapsed" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Border.Style>
                                 </Border>
 
+                                <TextBox Grid.Column="1" Grid.Row="0" Margin="3" Text="{Binding Path=Executable, Mode=TwoWay}" HorizontalContentAlignment="Stretch"/>
+                                <Button Grid.Column="2" Grid.Row="0" Margin="3" Name="ButtonBrowseExe" Click="ButtonBrowseExe_OnClick">
+                                    ...
+                                </Button>
+                                <TextBox Grid.Column="1" Grid.Row="1" Margin="3"
+                                         Text="{Binding Path=CommandLineArguments, Mode=TwoWay}" />
+                                <Button Grid.Column="2" Grid.Row="1" Margin="3">...</Button>
 
-                                <TextBox Grid.Column="1" Grid.Row="0" Margin="3" Text="{Binding Path=Executable, Mode=TwoWay}"></TextBox>
-                                <Button Grid.Column="2" Grid.Row="0" Margin="3" Name="ButtonBrowseExe" Click="ButtonBrowseExe_OnClick" >...</Button>
-                                <TextBox Grid.Column="1" Grid.Row="1" Margin="3" Text="{Binding Path=CommandLineArguments, Mode=TwoWay}"></TextBox>
-                                <Button Grid.Column="2" Grid.Row="1" Margin="3" >...</Button>
-
-                                <Label Grid.Column="3" Grid.RowSpan="2" Grid.Row="0" Margin="3" Content="{Binding Path=CurrentProcessId, Mode=OneWay}"></Label>
-
+                                <WrapPanel Grid.Column="3" Grid.Row="0" Grid.RowSpan="2">
+                                    <Button Click="ButtonStart_OnClick" Margin="0" HorizontalAlignment="Center" ToolTip="Start this application" Name="ButtonStart">
+                                        <Button.Template>
+                                            <ControlTemplate>
+                                                <Border x:Name="theBorder" BorderBrush="Transparent" BorderThickness="2">
+                                                    <Image Source="Media/glyphicons_173_play.png" Width="16" Height="18" Margin="4"/>
+                                                    <Border.Style>
+                                                        <Style TargetType="{x:Type Border}">
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding CurrentProcess, Converter={StaticResource isNullConverter}}" Value="False">
+                                                                    <Setter Property="Visibility" Value="Hidden" />
+                                                                </DataTrigger>
+                                                                <DataTrigger Binding="{Binding CurrentProcess, Converter={StaticResource isNullConverter}}" Value="True">
+                                                                    <Setter Property="Visibility" Value="Visible" />
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </Border.Style>
+                                                </Border>
+                                                <ControlTemplate.Triggers>
+                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                        <Setter Property="BorderBrush" TargetName="theBorder" Value="LightGray" />
+                                                    </Trigger>
+                                                </ControlTemplate.Triggers>
+                                            </ControlTemplate>
+                                        </Button.Template>
+                                    </Button>
+                                    <Button Click="ButtonStop_OnClick" Margin="0" HorizontalAlignment="Center" ToolTip="Stop this application" Name="ButtonStop">
+                                        <Button.Template>
+                                            <ControlTemplate>
+                                                <Border x:Name="theBorder" BorderBrush="Transparent" BorderThickness="2" Visibility="Hidden">
+                                                    <Image Source="Media/glyphicons_175_stop.png" Width="16" Height="18" Margin="4" />
+                                                    <Border.Style>
+                                                        <Style TargetType="{x:Type Border}">
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding CurrentProcess, Converter={StaticResource isNullConverter}}" Value="False">
+                                                                    <Setter Property="Visibility" Value="Visible" />
+                                                                </DataTrigger>
+                                                                <DataTrigger Binding="{Binding CurrentProcess, Converter={StaticResource isNullConverter}}" Value="True">
+                                                                    <Setter Property="Visibility" Value="Hidden" />
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </Border.Style>
+                                                </Border>
+                                                
+                                                <ControlTemplate.Triggers>
+                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                        <Setter Property="BorderBrush" TargetName="theBorder" Value="LightGray" />
+                                                    </Trigger>
+                                                </ControlTemplate.Triggers>
+                                            </ControlTemplate>
+                                        </Button.Template>
+                                    </Button>
+                                </WrapPanel>
                             </Grid>
                             <DockPanel DockPanel.Dock="Top">
-                                <Separator></Separator>
+                                <Separator />
                             </DockPanel>
                         </DockPanel>
 

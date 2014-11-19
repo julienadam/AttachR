@@ -77,9 +77,14 @@ namespace AttachR.Models
 
         public void Clear()
         {
-            DebuggingProfile = new DebuggingProfile();
+            Load(new DebuggingProfile(), "");
+        }
+
+        public void Load(DebuggingProfile profile, string filePath)
+        {
+            DebuggingProfile = profile;
+            FileName = filePath;
             Error = "";
-            FileName = "";
             IsDirty = false;
         }
     }

@@ -13,15 +13,15 @@ namespace AttachR.Models
             Targets = new BindingList<DebuggingTarget>();
         }
 
-        private string visualStudioSolutionName;
-        public string VisualStudioSolutionName
+        private string visualStudioSolutionPath;
+        public string VisualStudioSolutionPath
         {
-            get { return visualStudioSolutionName; }
+            get { return visualStudioSolutionPath; }
             set
             {
-                if (visualStudioSolutionName != value)
+                if (visualStudioSolutionPath != value)
                 {
-                    visualStudioSolutionName = value;
+                    visualStudioSolutionPath = value;
                     OnPropertyChanged();
                 }
             }

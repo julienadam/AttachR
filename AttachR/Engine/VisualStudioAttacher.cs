@@ -143,7 +143,6 @@ namespace AttachR.Engine
             return null;
         }
 
-
         public static Process GetVisualStudioForSolution(string solutionName)
         {
             IEnumerable<Process> visualStudios = GetVisualStudioProcesses();

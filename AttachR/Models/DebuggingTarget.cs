@@ -64,6 +64,7 @@ namespace AttachR.Models
                 {
                     currentProcess = value;
                     OnPropertyChanged("CurrentProcessId");
+                    OnPropertyChanged();
                 }
             }
         }

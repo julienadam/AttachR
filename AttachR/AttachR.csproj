@@ -67,6 +67,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="IsNullConverter.cs" />
     <Compile Include="Models\FileManager.cs" />
     <Compile Include="Models\IconLoader.cs" />
     <Compile Include="Models\Model.cs" />
@@ -116,6 +117,13 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Media\glyphicons_173_play.png" />
+    <Resource Include="Media\glyphicons_175_stop.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Media\glyphicons_151_new_window.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

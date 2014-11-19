@@ -12,7 +12,7 @@ namespace AttachR
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow
     {
         private const string FILE_DIALOG_FILTERS = "Debug profiles|*.dpf|All Files|*.*";
         private readonly Maestro maestro = new Maestro();
@@ -54,11 +54,7 @@ namespace AttachR
 
             try
             {
-                // Load profile
-                Model.DebuggingProfile = fileManager.Open(filePath);
-                Model.IsDirty = false;
-                Model.FileName = filePath;
-                Model.Error = "";
+                Model.Load(fileManager.Open(filePath), filePath);
                 RecentFileList.InsertFile(filePath);
             }
             catch(Exception ex)
@@ -91,10 +87,10 @@ namespace AttachR
 
         private void MenuItem_Open_OnClick(object sender, RoutedEventArgs e)
         {
-            var f = ShowOpenDialog("Debug profiles", ".dpf");
-            if (f != null)
+            var profileFile = ShowOpenDialog("Debug profiles", ".dpf");
+            if (profileFile != null)
             {
-                FileOpenCore(f);
+                FileOpenCore(profileFile);
             }
         }
 
@@ -127,7 +123,7 @@ namespace AttachR
 
         private void SaveAs()
         {
-            SaveFileDialog d = new SaveFileDialog
+            var dialog = new SaveFileDialog
             {
                 AddExtension = true,
                 ValidateNames = true,
@@ -136,9 +132,9 @@ namespace AttachR
                 FilterIndex = 0,
             };
 
-            if (d.ShowDialog() == true)
+            if (dialog.ShowDialog() == true)
             {
-                Save(d.FileName);
+                Save(dialog.FileName);
             }
         }
 
@@ -179,26 +175,30 @@ namespace AttachR
 
         private void ButtonBrowseForSolution_OnClick(object sender, RoutedEventArgs e)
         {
-            var f = ShowOpenDialog("Solution files", "*.sln");
-            if (f != null)
+            var solutionFile = ShowOpenDialog("Solution files", "*.sln");
+            if (solutionFile != null)
             {
-                Model.FileName = f;
+                Model.DebuggingProfile.VisualStudioSolutionPath = solutionFile;
             }
         }
 
         private void ButtonBrowseExe_OnClick(object sender, RoutedEventArgs e)
         {
-            var f = ShowOpenDialog("Executable files", "*.exe");
-            if (f != null)
+            var executableFile = ShowOpenDialog("Executable files", "*.exe");
+            if (executableFile != null)
             {
-                var context = (DebuggingTarget)((FrameworkElement)e.Source).DataContext;
-                context.Executable = f;
+                GetTargetFromEvent(e).Executable = executableFile;
             }
+        }
+
+        private static DebuggingTarget GetTargetFromEvent(RoutedEventArgs e)
+        {
+            return (DebuggingTarget) ((FrameworkElement) e.Source).DataContext;
         }
 
         private static string ShowOpenDialog(string fileTypeDescription, string fileTypeExtension)
         {
-            var d = new OpenFileDialog
+            var dialog = new OpenFileDialog
             {
                 Filter = string.Format("{0}|{1}|All files|*.*", fileTypeDescription, fileTypeExtension),
                 FilterIndex = 0,
@@ -207,11 +207,22 @@ namespace AttachR
                 ValidateNames = true,
             };
 
-            if (d.ShowDialog() == true)
-            {
-                return d.FileName;
-            }
-            return null;
+            return dialog.ShowDialog() == true ? dialog.FileName : null;
+        }
+
+        private void ButtonStart_OnClick(object sender, RoutedEventArgs e)
+        {
+            maestro.Run(Model.DebuggingProfile, GetTargetFromEvent(e));
+        }
+
+        private void ButtonStop_OnClick(object sender, RoutedEventArgs e)
+        {
+            maestro.Stop(GetTargetFromEvent(e));
+        }
+
+        private void ButtonOpenSolution_OnClick(object sender, RoutedEventArgs e)
+        {
+            maestro.OpenSolution(Model.DebuggingProfile);
         }
     }
 }
