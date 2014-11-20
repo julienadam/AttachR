@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows;
+using AttachR.Components;
 using AttachR.Components.Recent;
 using AttachR.ViewModels;
 using Caliburn.Micro;
@@ -38,25 +39,14 @@ namespace AttachR
                 typeof(IRecentFileListPersister), 
                 null, 
                 new RegistryPersister());
+            container.PerRequest<MainViewModel, MainViewModel>();
             container.Singleton<IEventAggregator, EventAggregator>();
         }
 
         protected override void OnStartup(object sender, StartupEventArgs e)
         {
             DisplayRootViewFor<MainViewModel>();
-        }
-
-        protected override void StartDesignTime()
-        {
-            var model = container.GetInstance<MainViewModel>();
-           
-            container.Instance(model);
-        }
-
-        protected override void StartRuntime()
-        {
-            container.PerRequest<MainViewModel, MainViewModel>();
-            base.StartRuntime();
+            MinimizeToTray.Enable(Application.MainWindow);
         }
     }
 }

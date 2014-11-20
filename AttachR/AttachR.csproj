@@ -53,6 +53,9 @@
       <EmbedInteropTypes>True</EmbedInteropTypes>
       <HintPath>..\..\..\..\..\Program Files (x86)\Common Files\Microsoft Shared\MSEnv\PublicAssemblies\envdte.dll</HintPath>
     </Reference>
+    <Reference Include="Hardcodet.Wpf.TaskbarNotification">
+      <HintPath>..\packages\Hardcodet.NotifyIcon.Wpf.1.0.5\lib\net451\Hardcodet.Wpf.TaskbarNotification.dll</HintPath>
+    </Reference>
     <Reference Include="MahApps.Metro">
       <HintPath>..\packages\MahApps.Metro.0.14.0.0\lib\net45\MahApps.Metro.dll</HintPath>
     </Reference>
@@ -92,6 +95,7 @@
     <Compile Include="Bootstrapper.cs" />
     <Compile Include="Commands\RunAllCommand.cs" />
     <Compile Include="Commands\StopAllCommand.cs" />
+    <Compile Include="Components\MinimizeToTray.cs" />
     <Compile Include="Components\Recent\IRecentFileListPersister.cs" />
     <Compile Include="Components\Recent\RegistryPersister.cs" />
     <Compile Include="IsNotNullOrEmptyConverter.cs" />
