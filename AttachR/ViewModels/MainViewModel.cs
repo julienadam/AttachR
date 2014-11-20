@@ -115,10 +115,9 @@ namespace AttachR.ViewModels
             }
         }
 
-       
         public void Save()
         {
-            if (FileName != null)
+            if (string.IsNullOrEmpty(FileName))
             {
                 SaveAs();
             }
@@ -150,6 +149,7 @@ namespace AttachR.ViewModels
             try
             {
                 fileManager.Save(newFileName, DebuggingProfile);
+                persister.InsertFile(newFileName);
             }
             catch (Exception ex)
             {

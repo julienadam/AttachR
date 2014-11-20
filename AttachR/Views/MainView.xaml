@@ -104,8 +104,18 @@
         <Separator DockPanel.Dock="Bottom" />
 
         <DockPanel HorizontalAlignment="Stretch" DockPanel.Dock="Bottom">
-            <Button Margin="5" Padding="5" Name="AddExecutable" DockPanel.Dock="Left">Add item</Button>
-            <Button Margin="5" Padding="5" Name="Run" Width="50" DockPanel.Dock="Right">_Run</Button>
+            <Button Margin="3" Width="60" Name="AddExecutable" DockPanel.Dock="Left">
+                <StackPanel>
+                <Image Source="/Views/Media/glyphicons_432_plus.png" Width="16" Height="18" Margin="3" />
+                <TextBlock Margin="3">Add exe</TextBlock>
+                </StackPanel>
+            </Button>
+            <Button Margin="3" Width="60" Name="Run" DockPanel.Dock="Right">
+                <StackPanel>
+                    <Image Source="/Views/Media/glyphicons_173_play.png" Width="16" Height="18" />
+                    <Label >_Run all</Label>
+                </StackPanel>
+            </Button>
             <!-- Somehow required to actually dock the Run button on the right side ... -->
             <Label DockPanel.Dock="Right"/>
         </DockPanel>
@@ -146,7 +156,7 @@
                                 </Border>
 
                                 <TextBox Grid.Column="1" Grid.Row="0" Margin="3" x:Name="Executable" Text="{Binding Path=Executable, Mode=TwoWay}" HorizontalContentAlignment="Stretch"/>
-                                <Button Grid.Column="2" Grid.Row="0" Margin="3" cal:Message.Attach="[Event Click] = [Action ButtonBrowseExe($dataContext)]">...</Button>
+                                <Button Grid.Column="2" Grid.Row="0" Margin="3" cal:Message.Attach="[Event Click] = [Action BrowseForExe($dataContext)]">...</Button>
                                 <TextBox Grid.Column="1" Grid.Row="1" Margin="3" Text="{Binding Path=CommandLineArguments, Mode=TwoWay}" x:Name="CommandLineArguments"/>
                                 <Button Grid.Column="2" Grid.Row="1" Margin="3">...</Button>
 

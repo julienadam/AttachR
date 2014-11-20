@@ -148,6 +148,9 @@
   <ItemGroup>
     <Resource Include="Views\Media\glyphicons_151_new_window.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Views\Media\glyphicons_432_plus.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
