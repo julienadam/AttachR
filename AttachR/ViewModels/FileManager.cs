@@ -2,7 +2,7 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
-namespace AttachR.Models
+namespace AttachR.ViewModels
 {
     public class FileManager
     {

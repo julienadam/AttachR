@@ -5,7 +5,7 @@ using System.Runtime.CompilerServices;
 using System.Windows.Media;
 using Newtonsoft.Json;
 
-namespace AttachR.Models
+namespace AttachR.ViewModels
 {
     public class DebuggingTarget : INotifyPropertyChanged
     {

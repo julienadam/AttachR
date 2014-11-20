@@ -6,7 +6,7 @@ using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
-namespace AttachR.Models
+namespace AttachR.ViewModels
 {
     public static class IconLoader
     {

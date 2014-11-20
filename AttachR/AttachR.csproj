@@ -38,6 +38,12 @@
     <StartupObject>AttachR.App</StartupObject>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Caliburn.Micro">
+      <HintPath>..\packages\Caliburn.Micro.Core.2.0.1\lib\net45\Caliburn.Micro.dll</HintPath>
+    </Reference>
+    <Reference Include="Caliburn.Micro.Platform">
+      <HintPath>..\packages\Caliburn.Micro.2.0.1\lib\net45\Caliburn.Micro.Platform.dll</HintPath>
+    </Reference>
     <Reference Include="envdte, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
       <SpecificVersion>False</SpecificVersion>
       <EmbedInteropTypes>True</EmbedInteropTypes>
@@ -47,9 +53,18 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Newtonsoft.Json.6.0.6\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
+    <Reference Include="NHotkey">
+      <HintPath>..\packages\NHotkey.1.2.1\lib\net20\NHotkey.dll</HintPath>
+    </Reference>
+    <Reference Include="NHotkey.Wpf">
+      <HintPath>..\packages\NHotkey.Wpf.1.2.1\lib\net35\NHotkey.Wpf.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Caliburn.Micro.2.0.1\lib\net45\System.Windows.Interactivity.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -67,12 +82,17 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Bootstrapper.cs" />
+    <Compile Include="Components\Recent\IRecentFileListPersister.cs" />
+    <Compile Include="Components\Recent\RegistryPersister.cs" />
     <Compile Include="IsNullConverter.cs" />
-    <Compile Include="Models\FileManager.cs" />
-    <Compile Include="Models\IconLoader.cs" />
-    <Compile Include="Models\Model.cs" />
-    <Compile Include="Components\RecentFileList.cs" />
-    <Page Include="MainWindow.xaml">
+    <Compile Include="LocalCommands.cs" />
+    <Compile Include="PreferencesCommand.cs" />
+    <Compile Include="ViewModels\FileManager.cs" />
+    <Compile Include="ViewModels\IconLoader.cs" />
+    <Compile Include="ViewModels\MainViewModel.cs" />
+    <Compile Include="Components\Recent\RecentFileList.cs" />
+    <Page Include="Views\MainView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -83,14 +103,14 @@
     <Compile Include="Engine\Maestro.cs" />
     <Compile Include="Engine\RunResult.cs" />
     <Compile Include="Engine\VisualStudioAttacher.cs" />
-    <Compile Include="MainWindow.xaml.cs">
-      <DependentUpon>MainWindow.xaml</DependentUpon>
+    <Compile Include="Views\MainView.xaml.cs">
+      <DependentUpon>MainView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Models\DebuggingTarget.cs" />
-    <Compile Include="Models\DebuggingProfile.cs" />
+    <Compile Include="ViewModels\DebuggingTarget.cs" />
+    <Compile Include="ViewModels\DebuggingProfile.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -119,11 +139,11 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Media\glyphicons_173_play.png" />
-    <Resource Include="Media\glyphicons_175_stop.png" />
+    <Resource Include="Views\Media\glyphicons_173_play.png" />
+    <Resource Include="Views\Media\glyphicons_175_stop.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Media\glyphicons_151_new_window.png" />
+    <Resource Include="Views\Media\glyphicons_151_new_window.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
