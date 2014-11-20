@@ -15,7 +15,8 @@
         Loaded="MainView_OnLoaded">
     
     <Window.Resources>
-        <attachR:IsNullConverter x:Key="isNullConverter"/>
+        <attachR:IsNullOrEmptyConverter x:Key="isNullOrEmptyConverter"/>
+        <attachR:IsNotNullOrEmptyConverter x:Key="isNotNullOrEmptyConverter"/>
     </Window.Resources>
 
     <DockPanel>
@@ -171,23 +172,13 @@
                                 <Button Grid.Column="2" Grid.Row="1" Margin="3">...</Button>
 
                                 <WrapPanel Grid.Column="3" Grid.Row="0" Grid.RowSpan="2">
-                                    <Button cal:Message.Attach="[Event Click] = [Action Start($dataContext)]" Margin="0" HorizontalAlignment="Center" ToolTip="Start this application" >
+                                    <Button cal:Message.Attach="[Event Click] = [Action Start($dataContext)]" 
+                                            Margin="0" HorizontalAlignment="Center" ToolTip="Start this application" 
+                                            Visibility="{Binding CurrentProcess, Converter={StaticResource isNullOrEmptyConverter}}">
                                         <Button.Template>
                                             <ControlTemplate>
                                                 <Border x:Name="theBorder" BorderBrush="Transparent" BorderThickness="2">
                                                     <Image Source="/Views/Media/glyphicons_173_play.png" Width="16" Height="18" Margin="4"/>
-                                                    <Border.Style>
-                                                        <Style TargetType="{x:Type Border}">
-                                                            <Style.Triggers>
-                                                                <DataTrigger Binding="{Binding CurrentProcess, Converter={StaticResource isNullConverter}}" Value="False">
-                                                                    <Setter Property="Visibility" Value="Hidden" />
-                                                                </DataTrigger>
-                                                                <DataTrigger Binding="{Binding CurrentProcess, Converter={StaticResource isNullConverter}}" Value="True">
-                                                                    <Setter Property="Visibility" Value="Visible" />
-                                                                </DataTrigger>
-                                                            </Style.Triggers>
-                                                        </Style>
-                                                    </Border.Style>
                                                 </Border>
                                                 <ControlTemplate.Triggers>
                                                     <Trigger Property="IsMouseOver" Value="True">
@@ -197,25 +188,14 @@
                                             </ControlTemplate>
                                         </Button.Template>
                                     </Button>
-                                    <Button cal:Message.Attach="[Event Click] = [Action Stop($dataContext)]" Margin="0" HorizontalAlignment="Center" ToolTip="Stop this application" Name="ButtonStop">
+                                    <Button cal:Message.Attach="[Event Click] = [Action Stop($dataContext)]" 
+                                            Margin="0" HorizontalAlignment="Center" ToolTip="Stop this application" Name="ButtonStop"
+                                            Visibility="{Binding CurrentProcess, Converter={StaticResource isNotNullOrEmptyConverter}}">>
                                         <Button.Template>
                                             <ControlTemplate>
-                                                <Border x:Name="theBorder" BorderBrush="Transparent" BorderThickness="2" Visibility="Hidden">
+                                                <Border x:Name="theBorder" BorderBrush="Transparent" BorderThickness="2">
                                                     <Image Source="/Views/Media/glyphicons_175_stop.png" Width="16" Height="18" Margin="4" />
-                                                    <Border.Style>
-                                                        <Style TargetType="{x:Type Border}">
-                                                            <Style.Triggers>
-                                                                <DataTrigger Binding="{Binding CurrentProcess, Converter={StaticResource isNullConverter}}" Value="False">
-                                                                    <Setter Property="Visibility" Value="Visible" />
-                                                                </DataTrigger>
-                                                                <DataTrigger Binding="{Binding CurrentProcess, Converter={StaticResource isNullConverter}}" Value="True">
-                                                                    <Setter Property="Visibility" Value="Hidden" />
-                                                                </DataTrigger>
-                                                            </Style.Triggers>
-                                                        </Style>
-                                                    </Border.Style>
                                                 </Border>
-                                                
                                                 <ControlTemplate.Triggers>
                                                     <Trigger Property="IsMouseOver" Value="True">
                                                         <Setter Property="BorderBrush" TargetName="theBorder" Value="LightGray" />

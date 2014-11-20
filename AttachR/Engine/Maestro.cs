@@ -35,7 +35,10 @@ namespace AttachR.Engine
                 var localTarget = t;
                 if (process != null)
                 {
-                    process.Exited += (sender, args) => { localTarget.CurrentProcess = null; };
+                    process.Exited += (sender, args) =>
+                    {
+                        localTarget.CurrentProcess = null;
+                    };
                     VisualStudioAttacher.AttachVisualStudioToProcess(visualStudioProcess, process);
                 }
                 t.CurrentProcess = process;
@@ -45,18 +48,33 @@ namespace AttachR.Engine
 
         public void Stop(DebuggingProfile profile)
         {
-            profile.Targets.ToList().ForEach(Stop);
+            profile.Targets.ToList().ForEach(t => Stop(t));
         }
 
-        public void Stop(DebuggingTarget target)
+        public RunResult Stop(DebuggingTarget target)
         {
             if (target.CurrentProcess == null)
             {
-                return;
+                return new RunResult
+                {
+                    Message = string.Format("Process was already killed")
+                };
             }
 
-            // Don't ask nicely, just kill the process, we want to be fast here.
-            target.CurrentProcess.Kill();
+            try
+            {
+                // Don't ask nicely, just kill the process, we want to be fast here.
+                target.CurrentProcess.Kill();
+            }
+            catch (Exception)
+            {
+                return new RunResult
+                {
+                    Message = string.Format("Could not kill process {0}", target.CurrentProcessId)
+                };
+            }
+            
+            return null;
         }
 
         public void OpenSolution(DebuggingProfile debuggingProfile)

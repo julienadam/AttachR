@@ -88,6 +88,7 @@
     <Compile Include="Bootstrapper.cs" />
     <Compile Include="Components\Recent\IRecentFileListPersister.cs" />
     <Compile Include="Components\Recent\RegistryPersister.cs" />
+    <Compile Include="IsNotNullOrEmptyConverter.cs" />
     <Compile Include="IsNullConverter.cs" />
     <Compile Include="LocalCommands.cs" />
     <Compile Include="PreferencesCommand.cs" />
@@ -106,6 +107,7 @@
     <Compile Include="Engine\Maestro.cs" />
     <Compile Include="Engine\RunResult.cs" />
     <Compile Include="Engine\VisualStudioAttacher.cs" />
+    <Compile Include="ViewModels\MainViewModelWithSampleData.cs" />
     <Compile Include="Views\MainView.xaml.cs">
       <DependentUpon>MainView.xaml</DependentUpon>
       <SubType>Code</SubType>

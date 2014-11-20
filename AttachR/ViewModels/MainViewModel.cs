@@ -1,6 +1,6 @@
 ﻿using System;
-using System.ComponentModel;
 using System.IO;
+using System.Threading;
 using System.Windows;
 using AttachR.Components.Recent;
 using AttachR.Engine;
@@ -15,12 +15,17 @@ namespace AttachR.ViewModels
         private const string FILE_DIALOG_FILTERS = "Debug profiles|*.dpf|All Files|*.*";
         private readonly Maestro maestro = new Maestro();
         private readonly FileManager fileManager = new FileManager();
+        private object debuggingProfileLock = new object();
+        // ReSharper disable once NotAccessedField.Local
+        private Timer timer;
 
         public MainViewModel(IRecentFileListPersister persister)
         {
             this.persister = persister;
             DebuggingProfile = new DebuggingProfile();
+            timer = new Timer(state => CheckExitedProcesses(), null, TimeSpan.Zero, TimeSpan.FromSeconds(5));
         }
+
 
         private string error;
         private DebuggingProfile debuggingProfile;
@@ -75,6 +80,21 @@ namespace AttachR.ViewModels
                 {
                     error = value;
                     NotifyOfPropertyChange(() => Error);
+                }
+            }
+        }
+
+        private void CheckExitedProcesses()
+        {
+            lock (debuggingProfileLock)
+            {
+                foreach (var debuggingTarget in DebuggingProfile.Targets)
+                {
+                    var process = debuggingTarget.CurrentProcess;
+                    if (process != null && process.HasExited)
+                    {
+                        debuggingTarget.CurrentProcess = null;
+                    }
                 }
             }
         }
@@ -246,7 +266,18 @@ namespace AttachR.ViewModels
 
         public void AddExecutable()
         {
-            DebuggingProfile.Targets.Add(new DebuggingTarget());
+            lock (debuggingProfileLock)
+            {
+                DebuggingProfile.Targets.Add(new DebuggingTarget());
+            }
+        }
+        
+        public void RemoveExecutable(DebuggingTarget target)
+        {
+            lock (debuggingProfileLock)
+            {
+                DebuggingProfile.Targets.Remove(target);
+            }
         }
 
         public void BrowseForSolution()
@@ -276,27 +307,6 @@ namespace AttachR.ViewModels
         public void Closing()
         {
             ValidateDataLoss();
-        }
-    }
-
-    public class MainViewModelWithSampleData : MainViewModel
-    {
-        public MainViewModelWithSampleData() : base(new RegistryPersister())
-        {
-            DebuggingProfile.VisualStudioSolutionPath = @"C:\Path\To\Some\Solution.sln";
-            DebuggingProfile.Targets = new BindingList<DebuggingTarget>()
-            {
-                new DebuggingTarget
-                {
-                    CommandLineArguments = "Some arguments",
-                    Executable = @"C:\Windows\notepad.exe",
-                },
-                new DebuggingTarget
-                {
-                    CommandLineArguments = "Other arguments",
-                    Executable = @"C:\Windows\System32\Cmd.exe",
-                },
-            };
         }
     }
 }
