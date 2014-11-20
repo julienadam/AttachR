@@ -86,12 +86,14 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Bootstrapper.cs" />
+    <Compile Include="Commands\RunAllCommand.cs" />
+    <Compile Include="Commands\StopAllCommand.cs" />
     <Compile Include="Components\Recent\IRecentFileListPersister.cs" />
     <Compile Include="Components\Recent\RegistryPersister.cs" />
     <Compile Include="IsNotNullOrEmptyConverter.cs" />
     <Compile Include="IsNullConverter.cs" />
-    <Compile Include="LocalCommands.cs" />
-    <Compile Include="PreferencesCommand.cs" />
+    <Compile Include="Commands\LocalCommands.cs" />
+    <Compile Include="Commands\PreferencesCommand.cs" />
     <Compile Include="ViewModels\FileManager.cs" />
     <Compile Include="ViewModels\IconLoader.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />

@@ -1,8 +1,8 @@
 using System.Windows.Input;
 
-namespace AttachR
+namespace AttachR.Commands
 {
-    public class PreferencesCommand : RoutedUICommand
+    public class StopAllCommand : RoutedCommand
     {
         public bool CanExecute(object parameter)
         {
@@ -11,8 +11,7 @@ namespace AttachR
 
         public void Execute(object parameter)
         {
-            //PreferencesWindow window = new PreferencesWindow();
-            //window.ShowDialog();
+            
         }
     }
 }
