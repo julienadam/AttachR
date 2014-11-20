@@ -1,10 +1,10 @@
 ﻿using System.Windows;
-using AttachR.Components.Recent;
 using AttachR.ViewModels;
+using MahApps.Metro.Controls;
 
 namespace AttachR.Views
 {
-    public partial class MainView
+    public partial class MainView : MetroWindow
     {
         public MainView()
         {
