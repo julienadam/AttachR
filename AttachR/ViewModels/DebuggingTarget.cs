@@ -72,9 +72,9 @@ namespace AttachR.ViewModels
         public event PropertyChangedEventHandler PropertyChanged;
 
         [JsonIgnore]
-        public int? CurrentProcessId
+        public string CurrentProcessId
         {
-            get { return CurrentProcess != null ? CurrentProcess.Id : (int?) null; }
+            get { return CurrentProcess != null ? CurrentProcess.Id.ToString() : "None"; }
         }
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)

@@ -24,8 +24,8 @@ namespace AttachR.Engine
             profile.CurrentVisualStudioProcess = visualStudioProcess;
 
             IEnumerable<DebuggingTarget> targets = 
-                target == null
-                ? new List<DebuggingTarget>()
+                target != null
+                ? new List<DebuggingTarget> { target }
                 : profile.Targets.ToList();
 
             foreach (var t in targets)

@@ -220,7 +220,7 @@ namespace AttachR.ViewModels
             }
         }
 
-        public void Run()
+        public void RunAll()
         {
             try
             {
@@ -228,7 +228,19 @@ namespace AttachR.ViewModels
             }
             catch (Exception ex)
             {
-                Error = string.Format("Could not run this configuration : {0}", ex.Message);
+                Error = string.Format("Could not run all executables : {0}", ex.Message);
+            }
+        }
+
+        public void StopAll()
+        {
+            try
+            {
+                maestro.Stop(DebuggingProfile);
+            }
+            catch (Exception ex)
+            {
+                Error = string.Format("Could not stop all executables : {0}", ex.Message);
             }
         }
 
