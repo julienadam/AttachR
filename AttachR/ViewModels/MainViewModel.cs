@@ -169,6 +169,7 @@ namespace AttachR.ViewModels
             try
             {
                 fileManager.Save(newFileName, DebuggingProfile);
+                FileName = newFileName;
                 persister.InsertFile(newFileName);
             }
             catch (Exception ex)
