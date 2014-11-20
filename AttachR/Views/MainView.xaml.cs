@@ -1,7 +1,6 @@
 ﻿using System.Windows;
 using System.Windows.Input;
 using AttachR.ViewModels;
-using MahApps.Metro.Controls;
 
 namespace AttachR.Views
 {
