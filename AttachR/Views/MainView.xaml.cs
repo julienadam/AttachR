@@ -5,11 +5,13 @@ using MahApps.Metro.Controls;
 
 namespace AttachR.Views
 {
-    public partial class MainView : MetroWindow
+    public partial class MainView
     {
         public MainView()
         {
             InitializeComponent();
+            StopAll.ToolTip = "Stop all the executables\r\nCTRL+ALT+STOP\r\nWIN+SHIFT+F5";
+            RunAll.ToolTip = "Run all the executables\r\nCTRL+ALT+PLAY\r\nWIN+F5";
         }
 
         private void MenuItem_Exit_OnClick(object sender, RoutedEventArgs e)

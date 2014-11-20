@@ -59,28 +59,18 @@
                     <RowDefinition Height="35" />
                 </Grid.RowDefinitions>
                 <Label Grid.Column="0" Grid.Row="0">Solution :</Label>
-                <TextBox Margin="3" Name="TextBoxSolution" Text="{Binding Path=DebuggingProfile.VisualStudioSolutionPath, Mode=TwoWay}" Grid.Column="1" Grid.Row="0" />
-                <Button Margin="3" Grid.Column="2" Grid.Row="0" x:Name="BrowseForSolution">...</Button>
+                <TextBox Margin="3" Name="TextBoxSolution" 
+                         controls:TextboxHelper.Watermark="Full path to .sln"
+                         Text="{Binding Path=DebuggingProfile.VisualStudioSolutionPath, Mode=TwoWay}" Grid.Column="1" Grid.Row="0" />
+                <Button Margin="4" Grid.Column="2" Grid.Row="0" x:Name="BrowseForSolution" 
+                        Style="{DynamicResource SquareButtonStyle}">...</Button>
 
                 <WrapPanel Grid.Column="3" Grid.Row="0" HorizontalAlignment="Center">
-                    <Button x:Name="OpenSolution" Margin="0" HorizontalAlignment="Center" ToolTip="Open the Visual Studio solution">
-                        <Button.Template>
-                            <ControlTemplate>
-                                <Border x:Name="theBorder" BorderBrush="Transparent" BorderThickness="2">
-                                    <Image Source="/Views/Media/glyphicons_151_new_window.png" Width="16" Height="18" Margin="4"/>
-                                </Border>
-                                <ControlTemplate.Triggers>
-                                    <Trigger Property="IsMouseOver" Value="True">
-                                        <Setter Property="BorderBrush" TargetName="theBorder" Value="LightGray" />
-                                    </Trigger>
-                                </ControlTemplate.Triggers>
-                            </ControlTemplate>
-                        </Button.Template>
+                    <Button x:Name="OpenSolution" Margin="4"  ToolTip="Open the Visual Studio solution"
+                            Style="{DynamicResource SquareButtonStyle}" >
+                        <Image Source="/Views/Media/glyphicons_151_new_window.png" Width="16"></Image>
                     </Button>
-
                 </WrapPanel>
-                
-
             </Grid>
         </GroupBox>
 
@@ -119,23 +109,17 @@
         <Separator DockPanel.Dock="Bottom" />
 
         <DockPanel HorizontalAlignment="Stretch" DockPanel.Dock="Bottom">
-            <Button Margin="3" Width="60" Name="AddExecutable" DockPanel.Dock="Left">
-                <StackPanel>
+            <Button Width="50" Height="50" Name="AddExecutable" DockPanel.Dock="Left"
+                    Style="{DynamicResource MetroCircleButtonStyle}">
                 <Image Source="/Views/Media/glyphicons_432_plus.png" Width="16" Height="18" Margin="3" />
-                <TextBlock Margin="3">Add exe</TextBlock>
-                </StackPanel>
             </Button>
-            <Button Margin="3" Width="60" Name="StopAll" DockPanel.Dock="Right">
-                <StackPanel>
+            <Button Width="50" Height="50" Name="StopAll" DockPanel.Dock="Right" 
+                    Style="{DynamicResource MetroCircleButtonStyle}">
                     <Image Source="/Views/Media/glyphicons_175_stop.png" Width="16" Height="18" />
-                    <Label >_Stop all</Label>
-                </StackPanel>
             </Button>
-            <Button Margin="3" Width="60" Name="RunAll" DockPanel.Dock="Right">
-                <StackPanel>
+            <Button Width="50" Height="50" Name="RunAll" DockPanel.Dock="Right"
+                    Style="{DynamicResource MetroCircleButtonStyle}">
                     <Image Source="/Views/Media/glyphicons_173_play.png" Width="16" Height="18" />
-                    <Label >_Run all</Label>
-                </StackPanel>
             </Button>
             <!-- Somehow required to actually dock the Run button on the right side ... -->
             <Label DockPanel.Dock="Right"/>
@@ -180,27 +164,42 @@
                                     <TextBlock Margin="3">Pid:</TextBlock>
                                     <TextBlock Margin="3" x:Name="CurrentProcessId" Text="{Binding Path=CurrentProcessId, Mode=OneWay}"/>
                                 </StackPanel>
-                                <TextBox Grid.Column="1" Grid.Row="0" Margin="3" x:Name="Executable" Text="{Binding Path=Executable, Mode=TwoWay}" HorizontalContentAlignment="Stretch"/>
-                                <Button Grid.Column="2" Grid.Row="0" Margin="3" cal:Message.Attach="[Event Click] = [Action BrowseForExe($dataContext)]">...</Button>
-                                <TextBox Grid.Column="1" Grid.Row="1" Margin="3" Text="{Binding Path=CommandLineArguments, Mode=TwoWay}" x:Name="CommandLineArguments"/>
-                                <Button Grid.Column="2" Grid.Row="1" Margin="3">...</Button>
+                                <TextBox Grid.Column="1" Grid.Row="0" Margin="3" 
+                                         x:Name="Executable" 
+                                         Text="{Binding Path=Executable, Mode=TwoWay}" 
+                                         controls:TextboxHelper.Watermark="Full path to executable"
+                                         HorizontalContentAlignment="Stretch"/>
+                                <Button Grid.Column="2" Grid.Row="0" Margin="3" 
+                                        cal:Message.Attach="[Event Click] = [Action BrowseForExe($dataContext)]"
+                                        Style="{DynamicResource SquareButtonStyle}">
+                                    ...
+                                </Button>
+                                <TextBox Grid.Column="1" Grid.Row="1" Margin="3" 
+                                         Text="{Binding Path=CommandLineArguments, Mode=TwoWay}" 
+                                         x:Name="CommandLineArguments"
+                                         controls:TextboxHelper.Watermark="Enter command line arguments here" />
+                                <Button Grid.Column="2" Grid.Row="1" Margin="3" Style="{DynamicResource SquareButtonStyle}">...</Button>
 
                                 <StackPanel Grid.Column="3" Grid.Row="0" Orientation="Horizontal">
                                     <Button cal:Message.Attach="[Event Click] = [Action Start($dataContext)]" 
                                             Margin="3" HorizontalAlignment="Center" ToolTip="Start this application" 
                                             Visibility="{Binding CurrentProcess, Converter={StaticResource isNullOrEmptyConverter}}"
-                                            Width="25">
+                                            Width="25"
+                                            Style="{DynamicResource SquareButtonStyle}">
                                         <Image Source="/Views/Media/glyphicons_173_play.png" Width="10" />
                                     </Button>
                                     <Button cal:Message.Attach="[Event Click] = [Action Stop($dataContext)]" 
                                             Margin="3" HorizontalAlignment="Center" ToolTip="Stop this application" Name="ButtonStop"
                                             Visibility="{Binding CurrentProcess, Converter={StaticResource isNotNullOrEmptyConverter}}"
+                                            Style="{DynamicResource SquareButtonStyle}"
                                             Width="25">
                                         <Image Source="/Views/Media/glyphicons_175_stop.png" Width="10"/>
                                     </Button>
                                 </StackPanel>
 
-                                <Button Grid.Column="3" Grid.Row="1" Margin="3" cal:Message.Attach="[Event Click] = [Action RemoveExecutable($dataContext)]">
+                                <Button Grid.Column="3" Grid.Row="1" Margin="3" 
+                                        cal:Message.Attach="[Event Click] = [Action RemoveExecutable($dataContext)]"
+                                        Style="{DynamicResource SquareButtonStyle}">
                                     <Image Source="/Views/Media/glyphicons_016_bin.png" Width="16" Height="18"  />
                                 </Button>
 
