@@ -138,7 +138,7 @@
                                     <ColumnDefinition Width="60" />
                                     <ColumnDefinition Width="*" />
                                     <ColumnDefinition Width="40" />
-                                    <ColumnDefinition Width="60" />
+                                    <ColumnDefinition Width="65" />
                                 </Grid.ColumnDefinitions>
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="35" />
@@ -171,40 +171,25 @@
                                 <TextBox Grid.Column="1" Grid.Row="1" Margin="3" Text="{Binding Path=CommandLineArguments, Mode=TwoWay}" x:Name="CommandLineArguments"/>
                                 <Button Grid.Column="2" Grid.Row="1" Margin="3">...</Button>
 
-                                <WrapPanel Grid.Column="3" Grid.Row="0" Grid.RowSpan="2">
+                                <StackPanel Grid.Column="3" Grid.Row="0" Orientation="Horizontal">
                                     <Button cal:Message.Attach="[Event Click] = [Action Start($dataContext)]" 
-                                            Margin="0" HorizontalAlignment="Center" ToolTip="Start this application" 
-                                            Visibility="{Binding CurrentProcess, Converter={StaticResource isNullOrEmptyConverter}}">
-                                        <Button.Template>
-                                            <ControlTemplate>
-                                                <Border x:Name="theBorder" BorderBrush="Transparent" BorderThickness="2">
-                                                    <Image Source="/Views/Media/glyphicons_173_play.png" Width="16" Height="18" Margin="4"/>
-                                                </Border>
-                                                <ControlTemplate.Triggers>
-                                                    <Trigger Property="IsMouseOver" Value="True">
-                                                        <Setter Property="BorderBrush" TargetName="theBorder" Value="LightGray" />
-                                                    </Trigger>
-                                                </ControlTemplate.Triggers>
-                                            </ControlTemplate>
-                                        </Button.Template>
+                                            Margin="3" HorizontalAlignment="Center" ToolTip="Start this application" 
+                                            Visibility="{Binding CurrentProcess, Converter={StaticResource isNullOrEmptyConverter}}"
+                                            Width="25">
+                                        <Image Source="/Views/Media/glyphicons_173_play.png" Width="10" />
                                     </Button>
                                     <Button cal:Message.Attach="[Event Click] = [Action Stop($dataContext)]" 
-                                            Margin="0" HorizontalAlignment="Center" ToolTip="Stop this application" Name="ButtonStop"
-                                            Visibility="{Binding CurrentProcess, Converter={StaticResource isNotNullOrEmptyConverter}}">>
-                                        <Button.Template>
-                                            <ControlTemplate>
-                                                <Border x:Name="theBorder" BorderBrush="Transparent" BorderThickness="2">
-                                                    <Image Source="/Views/Media/glyphicons_175_stop.png" Width="16" Height="18" Margin="4" />
-                                                </Border>
-                                                <ControlTemplate.Triggers>
-                                                    <Trigger Property="IsMouseOver" Value="True">
-                                                        <Setter Property="BorderBrush" TargetName="theBorder" Value="LightGray" />
-                                                    </Trigger>
-                                                </ControlTemplate.Triggers>
-                                            </ControlTemplate>
-                                        </Button.Template>
+                                            Margin="3" HorizontalAlignment="Center" ToolTip="Stop this application" Name="ButtonStop"
+                                            Visibility="{Binding CurrentProcess, Converter={StaticResource isNotNullOrEmptyConverter}}"
+                                            Width="25">
+                                        <Image Source="/Views/Media/glyphicons_175_stop.png" Width="10"/>
                                     </Button>
-                                </WrapPanel>
+                                </StackPanel>
+
+                                <Button Grid.Column="3" Grid.Row="1" Margin="3" cal:Message.Attach="[Event Click] = [Action RemoveExecutable($dataContext)]">
+                                    <Image Source="/Views/Media/glyphicons_016_bin.png" Width="16" Height="18"  />
+                                </Button>
+
                             </Grid>
                             <DockPanel DockPanel.Dock="Top">
                                 <Separator />
