@@ -13,6 +13,7 @@ namespace AttachR.ViewModels
         private string commandLineArguments;
         private Process currentProcess;
         private ImageSource icon;
+        private bool selected;
 
         [JsonIgnore]
         public ImageSource Icon
@@ -22,6 +23,19 @@ namespace AttachR.ViewModels
             {
                 icon = value;
                 OnPropertyChanged();
+            }
+        }
+
+        public bool Selected
+        {
+            get { return selected; }
+            set
+            {
+                if (selected != value)
+                {
+                    selected = value;
+                    OnPropertyChanged();
+                }
             }
         }
 

@@ -44,7 +44,7 @@ namespace AttachR.Engine
                 ? new List<DebuggingTarget> { singleTarget }
                 : profile.Targets.ToList();
 
-            foreach (var t in targets.Where(tr => tr.CurrentProcess == null))
+            foreach (var t in targets.Where(tr => tr.Selected && tr.CurrentProcess == null))
             {
                 ProcessStartInfo psi = new ProcessStartInfo(t.Executable, t.CommandLineArguments);
                 var process = Process.Start(psi);
