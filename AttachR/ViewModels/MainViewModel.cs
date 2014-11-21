@@ -2,30 +2,37 @@
 using System.IO;
 using System.Threading;
 using System.Windows;
+using AttachR.Commands;
 using AttachR.Components.Recent;
 using AttachR.Engine;
 using Caliburn.Micro;
+using JetBrains.Annotations;
 using Microsoft.Win32;
 
 namespace AttachR.ViewModels
 {
-    public class MainViewModel : PropertyChangedBase
+    public class MainViewModel : PropertyChangedBase, IHandle<RunAllCommand>, IHandle<StopAllCommand>
     {
         private readonly IRecentFileListPersister persister;
         private const string FILE_DIALOG_FILTERS = "Debug profiles|*.dpf|All Files|*.*";
         private readonly Maestro maestro = new Maestro();
         private readonly FileManager fileManager = new FileManager();
-        private object debuggingProfileLock = new object();
+        private readonly object debuggingProfileLock = new object();
         // ReSharper disable once NotAccessedField.Local
         private Timer timer;
 
-        public MainViewModel(IRecentFileListPersister persister)
+        public MainViewModel([NotNull] IRecentFileListPersister persister, [NotNull] IEventAggregator aggregator)
         {
+            if (persister == null) throw new ArgumentNullException("persister");
+            if (aggregator == null) throw new ArgumentNullException("aggregator");
+            
             this.persister = persister;
+
+            aggregator.Subscribe(this);
+
             DebuggingProfile = new DebuggingProfile();
             timer = new Timer(state => CheckExitedProcesses(), null, TimeSpan.Zero, TimeSpan.FromSeconds(5));
         }
-
 
         private string error;
         private DebuggingProfile debuggingProfile;
@@ -245,7 +252,8 @@ namespace AttachR.ViewModels
         {
             try
             {
-                maestro.Run(DebuggingProfile);
+                RunResult result = maestro.Run(DebuggingProfile);
+                Error = result.Message;
             }
             catch (Exception ex)
             {
@@ -257,7 +265,8 @@ namespace AttachR.ViewModels
         {
             try
             {
-                maestro.Stop(DebuggingProfile);
+                var result = maestro.Stop(DebuggingProfile);
+                Error = result.Message;
             }
             catch (Exception ex)
             {
@@ -292,12 +301,14 @@ namespace AttachR.ViewModels
 
         public void Start(DebuggingTarget target)
         {
-            maestro.Run(DebuggingProfile, target);
+            var result = maestro.Run(DebuggingProfile, target);
+            Error = result.Message;
         }
 
         public void Stop(DebuggingTarget target)
-        { 
-            maestro.Stop(target);
+        {
+            var result = maestro.Stop(target);
+            Error = result.Message;
         }
 
         public void OpenSolution()
@@ -308,6 +319,16 @@ namespace AttachR.ViewModels
         public void Closing()
         {
             ValidateDataLoss();
+        }
+
+        public void Handle(RunAllCommand message)
+        {
+            RunAll();
+        }
+
+        public void Handle(StopAllCommand message)
+        {
+            StopAll();
         }
     }
 }

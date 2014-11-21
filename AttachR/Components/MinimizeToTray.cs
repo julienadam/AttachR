@@ -56,17 +56,17 @@ namespace AttachR.Components
                     notifyIcon = new TaskbarIcon
                     {
                         Icon = Icon.ExtractAssociatedIcon(Assembly.GetEntryAssembly().Location),
-                        DoubleClickCommand = new ShowWindowCommand(window)
+                        DoubleClickCommand = new ShowWindowCommand(window),
+                        Visibility = Visibility.Visible,
                     };
                 }
-            
+
                 // Update copy of Window Title in case it has changed
                 notifyIcon.ToolTip = window.Title;
 
                 // Show/hide Window and NotifyIcon
                 var minimized = (window.WindowState == WindowState.Minimized);
                 window.ShowInTaskbar = !minimized;
-                notifyIcon.Visibility = minimized ? Visibility.Visible : Visibility.Hidden;
             }
         }
 

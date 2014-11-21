@@ -13,7 +13,8 @@
         mc:Ignorable="d" 
         Title="AttachR" Height="450" Width="900"
         cal:Message.Attach="[Event Closing] = [Action Closing()]"
-        Loaded="MainView_OnLoaded">
+        Loaded="MainView_OnLoaded"
+                      Unloaded="MainView_OnUnloaded">
     
     <Window.Resources>
         <attachR:IsNullOrEmptyConverter x:Key="isNullOrEmptyConverter"/>
@@ -25,12 +26,17 @@
         <CommandBinding Command="{x:Static commands:LocalCommands.StopAllCommand}" Executed="CommandBinding_StopAll_OnExecuted"></CommandBinding>
     </Window.CommandBindings>
 
-    <Window.InputBindings>
+    <!--<Window.InputBindings>
         <KeyBinding Gesture="Ctrl+Alt+MediaPlayPause" Command="{x:Static commands:LocalCommands.RunAllCommand}" HotkeyManager.RegisterGlobalHotkey="True" />
         <KeyBinding Gesture="Ctrl+Alt+MediaStop" Command="{x:Static commands:LocalCommands.StopAllCommand}" HotkeyManager.RegisterGlobalHotkey="True" />
         <KeyBinding Gesture="Windows+F5" Command="{x:Static commands:LocalCommands.RunAllCommand}" HotkeyManager.RegisterGlobalHotkey="True" />
         <KeyBinding Gesture="Windows+Shift+F5" Command="{x:Static commands:LocalCommands.StopAllCommand}" HotkeyManager.RegisterGlobalHotkey="True" />
-    </Window.InputBindings>
+    </Window.InputBindings>--><!--<Window.InputBindings>
+        <KeyBinding Gesture="Ctrl+Alt+MediaPlayPause" Command="{x:Static commands:LocalCommands.RunAllCommand}" HotkeyManager.RegisterGlobalHotkey="True" />
+        <KeyBinding Gesture="Ctrl+Alt+MediaStop" Command="{x:Static commands:LocalCommands.StopAllCommand}" HotkeyManager.RegisterGlobalHotkey="True" />
+        <KeyBinding Gesture="Windows+F5" Command="{x:Static commands:LocalCommands.RunAllCommand}" HotkeyManager.RegisterGlobalHotkey="True" />
+        <KeyBinding Gesture="Windows+Shift+F5" Command="{x:Static commands:LocalCommands.StopAllCommand}" HotkeyManager.RegisterGlobalHotkey="True" />
+    </Window.InputBindings>-->
 
     
     <DockPanel>

@@ -56,6 +56,9 @@
     <Reference Include="Hardcodet.Wpf.TaskbarNotification">
       <HintPath>..\packages\Hardcodet.NotifyIcon.Wpf.1.0.5\lib\net451\Hardcodet.Wpf.TaskbarNotification.dll</HintPath>
     </Reference>
+    <Reference Include="JetBrains.Annotations">
+      <HintPath>..\packages\JetBrains.Annotations.Redist.7.1\lib\net40\JetBrains.Annotations.dll</HintPath>
+    </Reference>
     <Reference Include="MahApps.Metro">
       <HintPath>..\packages\MahApps.Metro.0.14.0.0\lib\net45\MahApps.Metro.dll</HintPath>
     </Reference>
@@ -98,6 +101,7 @@
     <Compile Include="Components\MinimizeToTray.cs" />
     <Compile Include="Components\Recent\IRecentFileListPersister.cs" />
     <Compile Include="Components\Recent\RegistryPersister.cs" />
+    <Compile Include="Engine\Retrier.cs" />
     <Compile Include="IsNotNullOrEmptyConverter.cs" />
     <Compile Include="IsNullConverter.cs" />
     <Compile Include="Commands\LocalCommands.cs" />

@@ -9,11 +9,26 @@ namespace AttachR.Engine
 {
     public class Maestro
     {
-        public RunResult Run(DebuggingProfile profile, DebuggingTarget target = null)
+        public RunResult Run(DebuggingProfile profile, DebuggingTarget singleTarget = null)
         {
             var solutionName = Path.GetFileName(profile.VisualStudioSolutionPath);
 
-            var visualStudioProcess = VisualStudioAttacher.GetVisualStudioForSolution(solutionName);
+            Process visualStudioProcess;
+            try
+            {
+                visualStudioProcess = Retrier.RunWithRetryOnException(
+                    () => VisualStudioAttacher.GetVisualStudioForSolution(solutionName));
+            }
+            catch (AggregateException ex)
+            {
+                return new RunResult
+                {
+                    Message = string.Format("Errors while looking for VS.NET instances {0}. Errors : {1}", 
+                    profile.VisualStudioSolutionPath,
+                    String.Join(". ", ex.InnerExceptions.Select(e => e.Message).ToArray()))
+                };
+            }
+            
             if (visualStudioProcess == null)
             {
                 return new RunResult
@@ -21,14 +36,15 @@ namespace AttachR.Engine
                     Message = string.Format("No visual studio instance found with solution {0}", profile.VisualStudioSolutionPath)
                 };
             }
+
             profile.CurrentVisualStudioProcess = visualStudioProcess;
 
             IEnumerable<DebuggingTarget> targets = 
-                target != null
-                ? new List<DebuggingTarget> { target }
+                singleTarget != null
+                ? new List<DebuggingTarget> { singleTarget }
                 : profile.Targets.ToList();
 
-            foreach (var t in targets)
+            foreach (var t in targets.Where(tr => tr.CurrentProcess == null))
             {
                 ProcessStartInfo psi = new ProcessStartInfo(t.Executable, t.CommandLineArguments);
                 var process = Process.Start(psi);
@@ -39,16 +55,34 @@ namespace AttachR.Engine
                     {
                         localTarget.CurrentProcess = null;
                     };
-                    VisualStudioAttacher.AttachVisualStudioToProcess(visualStudioProcess, process);
+
+                    try
+                    {
+                        Retrier.RunWithRetryOnException(() => VisualStudioAttacher.AttachVisualStudioToProcess(visualStudioProcess, process));
+                    }
+                    catch (AggregateException ex)
+                    {
+                        return new RunResult
+                        {
+                            Message = string.Format("Errors while attaching process {0} to VS.NET. Errors : {1}",
+                            t.Executable,
+                            String.Join(". ", ex.InnerExceptions.Select(e => e.Message).ToArray()))
+                        };
+                    }
+                    
                 }
                 t.CurrentProcess = process;
             }
             return new RunResult();
         }
 
-        public void Stop(DebuggingProfile profile)
+        public RunResult Stop(DebuggingProfile profile)
         {
-            profile.Targets.ToList().ForEach(t => Stop(t));
+            var results = profile.Targets.ToList().Select(t => Stop(t).Message).ToArray();
+            return new RunResult
+            {
+                Message = String.Join(". ", results)
+            };
         }
 
         public RunResult Stop(DebuggingTarget target)
@@ -74,7 +108,7 @@ namespace AttachR.Engine
                 };
             }
             
-            return null;
+            return new RunResult();
         }
 
         public void OpenSolution(DebuggingProfile debuggingProfile)

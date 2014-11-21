@@ -2,10 +2,14 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows;
+using System.Windows.Input;
+using AttachR.Commands;
 using AttachR.Components;
 using AttachR.Components.Recent;
 using AttachR.ViewModels;
 using Caliburn.Micro;
+using NHotkey;
+using NHotkey.Wpf;
 
 namespace AttachR
 {
@@ -35,17 +39,35 @@ namespace AttachR
 
         protected override void Configure()
         {
+            container.Singleton<IEventAggregator, EventAggregator>();
             container.RegisterInstance(
                 typeof(IRecentFileListPersister), 
                 null, 
                 new RegistryPersister());
-            container.PerRequest<MainViewModel, MainViewModel>();
-            container.Singleton<IEventAggregator, EventAggregator>();
+            container.Singleton<MainViewModel>();
         }
 
         protected override void OnStartup(object sender, StartupEventArgs e)
         {
             DisplayRootViewFor<MainViewModel>();
+            EventHandler<HotkeyEventArgs> runAllHandler = (o, args) =>
+            {
+                var aggregator = container.GetInstance<IEventAggregator>();
+                aggregator.PublishOnUIThread(new RunAllCommand());
+            };
+            
+            EventHandler<HotkeyEventArgs> stopAllHandler = (o, args) =>
+            {
+                var aggregator = container.GetInstance<IEventAggregator>();
+                aggregator.PublishOnUIThread(new StopAllCommand());
+            };
+            
+            HotkeyManager.Current.AddOrReplace("RunAll1", Key.MediaPlayPause, ModifierKeys.Alt | ModifierKeys.Control, runAllHandler);
+            HotkeyManager.Current.AddOrReplace("RunAll2", Key.F5, ModifierKeys.Windows, runAllHandler);
+
+            HotkeyManager.Current.AddOrReplace("StopAll1", Key.MediaStop, ModifierKeys.Alt | ModifierKeys.Control, stopAllHandler);
+            HotkeyManager.Current.AddOrReplace("StopAll2", Key.F5, ModifierKeys.Windows | ModifierKeys.Shift, stopAllHandler);
+
             MinimizeToTray.Enable(Application.MainWindow);
         }
     }
