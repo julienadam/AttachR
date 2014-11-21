@@ -26,19 +26,6 @@
         <CommandBinding Command="{x:Static commands:LocalCommands.StopAllCommand}" Executed="CommandBinding_StopAll_OnExecuted"></CommandBinding>
     </Window.CommandBindings>
 
-    <!--<Window.InputBindings>
-        <KeyBinding Gesture="Ctrl+Alt+MediaPlayPause" Command="{x:Static commands:LocalCommands.RunAllCommand}" HotkeyManager.RegisterGlobalHotkey="True" />
-        <KeyBinding Gesture="Ctrl+Alt+MediaStop" Command="{x:Static commands:LocalCommands.StopAllCommand}" HotkeyManager.RegisterGlobalHotkey="True" />
-        <KeyBinding Gesture="Windows+F5" Command="{x:Static commands:LocalCommands.RunAllCommand}" HotkeyManager.RegisterGlobalHotkey="True" />
-        <KeyBinding Gesture="Windows+Shift+F5" Command="{x:Static commands:LocalCommands.StopAllCommand}" HotkeyManager.RegisterGlobalHotkey="True" />
-    </Window.InputBindings>--><!--<Window.InputBindings>
-        <KeyBinding Gesture="Ctrl+Alt+MediaPlayPause" Command="{x:Static commands:LocalCommands.RunAllCommand}" HotkeyManager.RegisterGlobalHotkey="True" />
-        <KeyBinding Gesture="Ctrl+Alt+MediaStop" Command="{x:Static commands:LocalCommands.StopAllCommand}" HotkeyManager.RegisterGlobalHotkey="True" />
-        <KeyBinding Gesture="Windows+F5" Command="{x:Static commands:LocalCommands.RunAllCommand}" HotkeyManager.RegisterGlobalHotkey="True" />
-        <KeyBinding Gesture="Windows+Shift+F5" Command="{x:Static commands:LocalCommands.StopAllCommand}" HotkeyManager.RegisterGlobalHotkey="True" />
-    </Window.InputBindings>-->
-
-    
     <DockPanel>
         <Menu VerticalAlignment="Top" DockPanel.Dock="Top">
             <MenuItem Header="_File">
@@ -108,7 +95,7 @@
             </StatusBarItem>
             <Separator Grid.Column="5" />
             <StatusBarItem Grid.Column="6">
-                <TextBlock Text="{Binding Path=Error}" />
+                <TextBlock Text="{Binding Path=Error}" ToolTip="{Binding Path=Error}"/>
             </StatusBarItem>
         </StatusBar>
 

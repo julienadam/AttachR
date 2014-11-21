@@ -153,7 +153,6 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <AppDesigner Include="Properties\" />
-    <None Include="read.me" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

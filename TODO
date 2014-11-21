@@ -1,0 +1,9 @@
+FEATURES:
+- Checkboxes before each .exe to customize running only part of the profile. Save this in the profile.
+- Auto-load last profile
+- Register extension
+- Installer (cf. above)
+
+BUGS:
+-Fix the length of the arguments textbox causing the whole listbox to overflow and display scrollbars
+-Can't attach from a UAC elevated app to a non elevated VS.NET
