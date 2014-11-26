@@ -9,7 +9,7 @@ namespace AttachR.ViewModels
     {
         private Guid id;
         private string name;
-
+       
         public Guid Id
         {
             get { return id; }
@@ -30,6 +30,10 @@ namespace AttachR.ViewModels
                 name = value;
                 OnPropertyChanged();
             }
+        }
+
+        public DebuggingEngine()
+        {
         }
 
         public DebuggingEngine(Guid id, string name)

@@ -1,0 +1,81 @@
+﻿<controls:MetroWindow x:Class="AttachR.Views.DebuggingTargetView"
+                      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                      xmlns:attachR="clr-namespace:AttachR"
+                      xmlns:cal="http://www.caliburnproject.org"
+                      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                      xmlns:controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+                      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                      xmlns:viewModels="clr-namespace:AttachR.ViewModels"
+                      d:DataContext="{d:DesignInstance Type=viewModels:DebuggingTargetViewModelWithSampleData, IsDesignTimeCreatable=True}"
+                      mc:Ignorable="d"
+                      Title="AttachR debugging target" Height="500" Width="900" BorderThickness="1" BorderBrush="Black"
+                      cal:Message.Attach="[Event Closing] = [Action Closing()]">
+    <!--<Window.Resources>
+        <attachR:IsNullOrEmptyConverter x:Key="isNullOrEmptyConverter" />
+        <attachR:IsNotNullOrEmptyConverter x:Key="isNotNullOrEmptyConverter" />
+    </Window.Resources>-->
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="100" />
+            <ColumnDefinition Width="100" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="85" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="200" />
+            <RowDefinition Height="40" />
+        </Grid.RowDefinitions>
+
+        <GroupBox Header="Executable" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" HorizontalContentAlignment="Stretch">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="40" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <TextBox Grid.Row="0" Grid.Column="0"
+                         Margin="3"
+                         x:Name="Executable"
+                         controls:TextboxHelper.Watermark="Full path to executable"
+                         Text="{Binding Path=Executable, Mode=TwoWay}" />
+                <Button
+                    Grid.Row="0" Grid.Column="1" Margin="3"
+                    Style="{DynamicResource SquareButtonStyle}"
+                    DockPanel.Dock="Right"
+                    cal:Message.Attach="[Event Click] = [Action BrowseForExe($dataContext)]">
+                    ...
+                </Button>
+            </Grid>
+
+        </GroupBox>
+
+
+        <GroupBox Header="Command line arguments" Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="1">
+            <TextBox
+                TextWrapping="Wrap"
+                Text="{Binding Path=CommandLineArguments, Mode=TwoWay}"
+                x:Name="CommandLineArguments"
+                controls:TextboxHelper.Watermark="Enter command line arguments here" />
+        </GroupBox>
+        <GroupBox Header="Debugging modes" Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="2">
+            <ListBox ItemsSource="{Binding DebuggingEngines, Mode=OneWay}">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal">
+                            <CheckBox Name="Selected" IsChecked="{Binding Selected}" />
+                            <TextBlock Name="Name" Text="{Binding Name}" />
+                        </StackPanel>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </GroupBox>
+
+        <Button Grid.Column="1" Grid.Row="3" Margin="3" Name="Ok">OK</Button>
+        <Button Grid.Column="2" Grid.Row="3" Margin="3" Name="Cancel">Cancel</Button>
+    </Grid>
+</controls:MetroWindow>

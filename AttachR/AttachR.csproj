@@ -42,6 +42,12 @@
     <ApplicationIcon>App.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="AutoMapper">
+      <HintPath>..\packages\AutoMapper.3.2.1\lib\net40\AutoMapper.dll</HintPath>
+    </Reference>
+    <Reference Include="AutoMapper.Net4">
+      <HintPath>..\packages\AutoMapper.3.2.1\lib\net40\AutoMapper.Net4.dll</HintPath>
+    </Reference>
     <Reference Include="Caliburn.Micro">
       <HintPath>..\packages\Caliburn.Micro.Core.2.0.1\lib\net45\Caliburn.Micro.dll</HintPath>
     </Reference>
@@ -127,11 +133,19 @@
     <Compile Include="Commands\LocalCommands.cs" />
     <Compile Include="Commands\PreferencesCommand.cs" />
     <Compile Include="ViewModels\DebuggingEngines.cs" />
-    <Compile Include="ViewModels\DebuggingEngine.cs" />
+    <Compile Include="ViewModels\DebuggingEngineViewModel.cs" />
+    <Compile Include="ViewModels\DebuggingEnginViewModel.cs" />
+    <Compile Include="ViewModels\DebuggingProfileViewModel.cs" />
+    <Compile Include="ViewModels\DebuggingTargetViewModel.cs" />
+    <Compile Include="ViewModels\DebuggingTargetViewModelWithSampleData.cs" />
     <Compile Include="ViewModels\FileManager.cs" />
     <Compile Include="ViewModels\IconLoader.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="Components\Recent\RecentFileList.cs" />
+    <Page Include="Views\DebuggingTargetView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\MainView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -144,14 +158,17 @@
     <Compile Include="Engine\RunResult.cs" />
     <Compile Include="Engine\VisualStudioAttacher.cs" />
     <Compile Include="ViewModels\MainViewModelWithSampleData.cs" />
+    <Compile Include="Views\DebuggingTargetView.xaml.cs">
+      <DependentUpon>DebuggingTargetView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\MainView.xaml.cs">
       <DependentUpon>MainView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ViewModels\DebuggingTarget.cs" />
-    <Compile Include="ViewModels\DebuggingProfile.cs" />
+    <Compile Include="Models\DebuggingTarget.cs" />
+    <Compile Include="Models\DebuggingProfile.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -195,7 +212,11 @@
   <ItemGroup>
     <Resource Include="App.ico" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Views\Media\glyphicons_030_pencil.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="..\packages\AutoMapper.3.2.1\tools\AutoMapper.targets" Condition="Exists('..\packages\AutoMapper.3.2.1\tools\AutoMapper.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

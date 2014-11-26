@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Windows;
 using System.Windows.Input;
 using AttachR.Commands;
@@ -40,10 +39,8 @@ namespace AttachR
         protected override void Configure()
         {
             container.Singleton<IEventAggregator, EventAggregator>();
-            container.RegisterInstance(
-                typeof(IRecentFileListPersister), 
-                null, 
-                new RegistryPersister());
+            container.Instance<IRecentFileListPersister>(new RegistryPersister());
+            container.Instance<IWindowManager>(new WindowManager());
             container.Singleton<MainViewModel>();
         }
 

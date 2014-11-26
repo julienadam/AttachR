@@ -32,10 +32,5 @@ namespace AttachR.Views
         {
             ((MainViewModel)DataContext).StopAll();
         }
-
-        private void MainView_OnUnloaded(object sender, RoutedEventArgs e)
-        {
-            throw new System.NotImplementedException();
-        }
     }
 }

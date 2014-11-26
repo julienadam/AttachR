@@ -4,22 +4,29 @@ using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows.Media;
+using Caliburn.Micro;
 using Newtonsoft.Json;
 
 namespace AttachR.ViewModels
 {
-    public class DebuggingTarget : INotifyPropertyChanged
+    public class DebuggingTargetViewModel : Screen, INotifyPropertyChanged
     {
         private string executable;
         private string commandLineArguments;
         private Process currentProcess;
         private ImageSource icon;
         private bool selected;
-        private DebuggingEngine debuggingEngine;
-
-        public DebuggingTarget()
+        
+        public DebuggingTargetViewModel()
         {
-            DebuggingEngine = DebuggingEngines.AvailableModes.First();
+            debuggingEngines = new BindingList<DebuggingEngineViewModel>(
+                ViewModels.DebuggingEngines.AvailableModes
+                    .Select(x => new DebuggingEngineViewModel
+                    {
+                        Id = x.Id,
+                        Name = x.Name,
+                        Selected = false,
+                    }).ToList());
         }
 
         [JsonIgnore]
@@ -73,20 +80,6 @@ namespace AttachR.ViewModels
             }
         }
 
-        public DebuggingEngine DebuggingEngine
-        {
-            get { return debuggingEngine; }
-            set
-            {
-                if (debuggingEngine != value)
-                {
-                    debuggingEngine = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
-
-
         public TimeSpan Delay { get; set; }
 
         [JsonIgnore]
@@ -116,6 +109,24 @@ namespace AttachR.ViewModels
         {
             var handler = PropertyChanged;
             if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+
+        private readonly BindingList<DebuggingEngineViewModel> debuggingEngines;
+
+        public BindingList<DebuggingEngineViewModel> DebuggingEngines
+        {
+            get { return debuggingEngines; }
+        }
+
+        public void Ok()
+        {
+            TryClose(true);
+        }
+
+        public void Cancel()
+        {
+            TryClose(false);
         }
     }
 }

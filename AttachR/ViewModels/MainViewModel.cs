@@ -5,6 +5,7 @@ using System.Windows;
 using AttachR.Commands;
 using AttachR.Components.Recent;
 using AttachR.Engine;
+using AttachR.Models;
 using Caliburn.Micro;
 using JetBrains.Annotations;
 using Microsoft.Win32;
@@ -14,6 +15,7 @@ namespace AttachR.ViewModels
     public class MainViewModel : PropertyChangedBase, IHandle<RunAllCommand>, IHandle<StopAllCommand>
     {
         private readonly IRecentFileListPersister persister;
+        private readonly IWindowManager windowManager;
         private const string FILE_DIALOG_FILTERS = "Debug profiles|*.dpf|All Files|*.*";
         private readonly Maestro maestro = new Maestro();
         private readonly FileManager fileManager = new FileManager();
@@ -22,25 +24,30 @@ namespace AttachR.ViewModels
         // ReSharper disable once NotAccessedField.Local
         private Timer timer;
 
-        public MainViewModel([NotNull] IRecentFileListPersister persister, [NotNull] IEventAggregator aggregator)
+        public MainViewModel(
+            [NotNull] IRecentFileListPersister persister, 
+            [NotNull] IEventAggregator aggregator,
+            [NotNull] IWindowManager windowManager)
         {
             if (persister == null) throw new ArgumentNullException("persister");
             if (aggregator == null) throw new ArgumentNullException("aggregator");
-            
+            if (windowManager == null) throw new ArgumentNullException("windowManager");
+
             this.persister = persister;
+            this.windowManager = windowManager;
 
             aggregator.Subscribe(this);
 
-            DebuggingProfile = new DebuggingProfile();
+            DebuggingProfile = new DebuggingProfileViewModel();
             timer = new Timer(state => CheckExitedProcesses(), null, TimeSpan.Zero, TimeSpan.FromSeconds(5));
         }
 
         private string error;
-        private DebuggingProfile debuggingProfile;
+        private DebuggingProfileViewModel debuggingProfile;
         private string fileName;
         private bool isDirty;
 
-        public DebuggingProfile DebuggingProfile
+        public DebuggingProfileViewModel DebuggingProfile
         {
             get { return debuggingProfile; }
             set
@@ -114,10 +121,10 @@ namespace AttachR.ViewModels
 
         private void Clear()
         {
-            Load(new DebuggingProfile(), "");
+            Load(new DebuggingProfileViewModel(), "");
         }
 
-        private void Load(DebuggingProfile profile, string filePath)
+        private void Load(DebuggingProfileViewModel profile, string filePath)
         {
             DebuggingProfile = profile;
             FileName = filePath;
@@ -253,7 +260,7 @@ namespace AttachR.ViewModels
         {
             try
             {
-                RunResult result = maestro.Run(DebuggingProfile);
+                RunResult result = maestro.Run(DebuggingProfile.VisualStudioSolutionPath, DebuggingProfile.Targets);
                 Error = result.Message;
             }
             catch (Exception ex)
@@ -279,11 +286,12 @@ namespace AttachR.ViewModels
         {
             lock (debuggingProfileLock)
             {
-                DebuggingProfile.Targets.Add(new DebuggingTarget());
+                //TODO: show window, add after.
+                DebuggingProfile.Targets.Add(new DebuggingTargetViewModel());
             }
         }
         
-        public void RemoveExecutable(DebuggingTarget target)
+        public void RemoveExecutable(DebuggingTargetViewModel target)
         {
             lock (debuggingProfileLock)
             {
@@ -300,13 +308,14 @@ namespace AttachR.ViewModels
             }
         }
 
-        public void Start(DebuggingTarget target)
+        public void Start(DebuggingTargetViewModel target)
         {
-            var result = maestro.Run(DebuggingProfile, target);
+            DebuggingProfileViewModel profile = DebuggingProfile;
+            var result = maestro.Run(profile.VisualStudioSolutionPath, profile.Targets, target);
             Error = result.Message;
         }
 
-        public void Stop(DebuggingTarget target)
+        public void Stop(DebuggingTargetViewModel target)
         {
             var result = maestro.Stop(target);
             Error = result.Message;
@@ -330,6 +339,11 @@ namespace AttachR.ViewModels
         public void Handle(StopAllCommand message)
         {
             StopAll();
+        }
+
+        public void EditExecutable(DebuggingTargetViewModel target)
+        {
+            windowManager.ShowDialog(target);
         }
     }
 }

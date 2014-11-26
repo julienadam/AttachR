@@ -9,22 +9,21 @@ namespace AttachR.Engine
 {
     public class Maestro
     {
-        public RunResult Run(DebuggingProfile profile, DebuggingTarget singleTarget = null)
+        public RunResult Run(string visualStudioSolutionPath, IEnumerable<DebuggingTargetViewModel> debuggingTargets, DebuggingTargetViewModel singleTarget = null)
         {
-            var solutionName = Path.GetFileName(profile.VisualStudioSolutionPath);
+            var solutionName = Path.GetFileName(visualStudioSolutionPath);
 
             Process visualStudioProcess;
             try
             {
-                visualStudioProcess = Retrier.RunWithRetryOnException(
-                    () => VisualStudioAttacher.GetVisualStudioForSolution(solutionName));
+                visualStudioProcess = Retrier.RunWithRetryOnException(() => VisualStudioAttacher.GetVisualStudioForSolution(solutionName));
             }
             catch (AggregateException ex)
             {
                 return new RunResult
                 {
                     Message = string.Format("Errors while looking for VS.NET instances {0}. Errors : {1}", 
-                    profile.VisualStudioSolutionPath,
+                    visualStudioSolutionPath,
                     String.Join(". ", ex.InnerExceptions.Select(e => e.Message).ToArray()))
                 };
             }
@@ -33,20 +32,18 @@ namespace AttachR.Engine
             {
                 return new RunResult
                 {
-                    Message = string.Format("No visual studio instance found with solution {0}", profile.VisualStudioSolutionPath)
+                    Message = string.Format("No visual studio instance found with solution {0}", visualStudioSolutionPath)
                 };
             }
 
-            profile.CurrentVisualStudioProcess = visualStudioProcess;
-
-            IEnumerable<DebuggingTarget> targets = 
+            IEnumerable<DebuggingTargetViewModel> targets = 
                 singleTarget != null
-                ? new List<DebuggingTarget> { singleTarget }
-                : profile.Targets.ToList();
+                ? new List<DebuggingTargetViewModel> { singleTarget }
+                : debuggingTargets.ToList();
 
             foreach (var t in targets.Where(tr => tr.Selected && tr.CurrentProcess == null))
             {
-                ProcessStartInfo psi = new ProcessStartInfo(t.Executable, t.CommandLineArguments);
+                var psi = new ProcessStartInfo(t.Executable, t.CommandLineArguments);
                 var process = Process.Start(psi);
                 var localTarget = t;
                 if (process != null)
@@ -58,7 +55,8 @@ namespace AttachR.Engine
 
                     try
                     {
-                        Retrier.RunWithRetryOnException(() => VisualStudioAttacher.AttachVisualStudioToProcess(visualStudioProcess, process, localTarget.DebuggingEngine.Id));
+                        var engineModes = localTarget.DebuggingEngines.Where(x => x.Selected).Select(x => x.Name).ToArray();
+                        Retrier.RunWithRetryOnException(() => VisualStudioAttacher.AttachVisualStudioToProcess(visualStudioProcess, process, engineModes));
                     }
                     catch (AggregateException ex)
                     {
@@ -76,7 +74,7 @@ namespace AttachR.Engine
             return new RunResult();
         }
 
-        public RunResult Stop(DebuggingProfile profile)
+        public RunResult Stop(DebuggingProfileViewModel profile)
         {
             var results = profile.Targets.ToList().Select(t => Stop(t).Message).ToArray();
             return new RunResult
@@ -85,7 +83,7 @@ namespace AttachR.Engine
             };
         }
 
-        public RunResult Stop(DebuggingTarget target)
+        public RunResult Stop(DebuggingTargetViewModel target)
         {
             if (target.CurrentProcess == null)
             {
@@ -111,7 +109,7 @@ namespace AttachR.Engine
             return new RunResult();
         }
 
-        public void OpenSolution(DebuggingProfile debuggingProfile)
+        public void OpenSolution(DebuggingProfileViewModel debuggingProfile)
         {
             Process.Start(debuggingProfile.VisualStudioSolutionPath);
         }
