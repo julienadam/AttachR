@@ -73,16 +73,16 @@ namespace AttachR.Engine
             return null;
         }
 
-        private static Dictionary<string, EnvDTE80.Engine> availableEngines;
+        private static Dictionary<Guid, EnvDTE80.Engine> availableEngines;
 
-        public static void AttachVisualStudioToProcess(Process visualStudioProcess, Process applicationProcess, params string[] engines)
+        public static void AttachVisualStudioToProcess(Process visualStudioProcess, Process applicationProcess, params Guid[] engines)
         {
             _DTE visualStudioInstance;
             if (!TryGetVsInstance(visualStudioProcess.Id, out visualStudioInstance)) return;
 
             if (availableEngines == null)
             {
-                availableEngines = GetEngines((Debugger2) visualStudioInstance.Debugger).ToDictionary(e => e.ID);
+                availableEngines = GetEngines((Debugger2) visualStudioInstance.Debugger).ToDictionary(e => new Guid(e.ID));
             }
 
             //Find the process you want the VS instance to attach to...
@@ -91,7 +91,7 @@ namespace AttachR.Engine
             //Attach to the process.
             if (processToAttachTo != null)
             {
-                var selectedEngines = engines.Select(e => availableEngines[e]);
+                var selectedEngines = engines.Select(e => availableEngines[e].Name).ToArray();
                 var process3 = (EnvDTE90.Process3)processToAttachTo;
                 process3.Attach2(selectedEngines);
 
