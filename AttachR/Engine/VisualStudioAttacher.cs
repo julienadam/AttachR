@@ -5,6 +5,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.ComTypes;
 using EnvDTE;
+using EnvDTE80;
 using Process = System.Diagnostics.Process;
 
 namespace AttachR.Engine
@@ -13,37 +14,6 @@ namespace AttachR.Engine
     /// I found this gem originally on PasteBin (http://pastebin.com/pHWMP3EQ) and (http://pastebin.com/KKyBpWQW).
     /// Since it was dropped there anonymously, it had little documentation, and I made a change, I thought I'd migrate it to a gist.
     /// I found this snippet of code extremely useful, it flows much better than the alternative Debugger.Launch() call.
-    ///
-    /// Example usage:
-    /// /// <summary>
-    /// /// Attaches a debugger, if built in with DEBUG symbol
-    /// /// </summary>
-    /// [Conditional("DEBUG")] 
-    /// private static void AttachDebugger()
-    /// {
-    /// 	if (!Debugger.IsAttached)
-    /// 	{
-    /// 		// do a search for any Visual Studio processes that also have our solution currently open
-    /// 		var vsProcess =
-    /// 			VisualStudioAttacher.GetVisualStudioForSolutions(
-    /// 				new List&lt;string&gt;() { "FooBar2012.sln", "FooBar.sln" });
-    /// 				
-    /// 		if (vsProcess != null) 
-    /// 		{
-    /// 			VisualStudioAttacher.AttachVisualStudioToProcess(proc, Process.GetCurrentProcess());
-    /// 		}
-    /// 		else
-    /// 		{
-    /// 			// try and attach the old fashioned way
-    /// 			Debugger.Launch();
-    /// 		}
-    /// 
-    /// 		if (Debugger.IsAttached)
-    /// 		{
-    /// 			Console.WriteLine("\t>>> Attach sucessful");
-    /// 		}
-    /// 	}
-    /// }
     /// </summary>
     public static class VisualStudioAttacher
     {
@@ -56,9 +26,9 @@ namespace AttachR.Engine
         [DllImport("ole32.dll")]
         public static extern int GetRunningObjectTable(int reserved, out IRunningObjectTable prot);
 
-
         [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
         public static extern bool SetForegroundWindow(IntPtr hWnd);
+
         [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
         public static extern IntPtr SetFocus(IntPtr hWnd);
 
@@ -72,7 +42,7 @@ namespace AttachR.Engine
                 {
                     return visualStudioInstance.Solution.FullName;
                 }
-                catch (Exception)
+                catch
                 {
                 }
             }
@@ -86,47 +56,51 @@ namespace AttachR.Engine
             foreach (Process visualStudio in visualStudios)
             {
                 _DTE visualStudioInstance;
-                if (TryGetVsInstance(visualStudio.Id, out visualStudioInstance))
+                if (!TryGetVsInstance(visualStudio.Id, out visualStudioInstance)) continue;
+                try
                 {
-                    try
+                    foreach (Process debuggedProcess in visualStudioInstance.Debugger.DebuggedProcesses
+                        .Cast<Process>()
+                        .Where(debuggedProcess => debuggedProcess.Id == applicationProcess.Id))
                     {
-                        foreach (Process debuggedProcess in visualStudioInstance.Debugger.DebuggedProcesses)
-                        {
-                            if (debuggedProcess.Id == applicationProcess.Id)
-                            {
-                                return debuggedProcess;
-                            }
-                        }
+                        return debuggedProcess;
                     }
-                    catch (Exception)
-                    {
-                    }
+                }
+                catch
+                {
                 }
             }
             return null;
         }
 
-        public static void AttachVisualStudioToProcess(Process visualStudioProcess, Process applicationProcess)
+        private static Dictionary<string, EnvDTE80.Engine> availableEngines;
+
+        public static void AttachVisualStudioToProcess(Process visualStudioProcess, Process applicationProcess, params string[] engines)
         {
             _DTE visualStudioInstance;
+            if (!TryGetVsInstance(visualStudioProcess.Id, out visualStudioInstance)) return;
 
-            if (TryGetVsInstance(visualStudioProcess.Id, out visualStudioInstance))
+            if (availableEngines == null)
             {
-                //Find the process you want the VS instance to attach to...
-                EnvDTE.Process processToAttachTo = visualStudioInstance.Debugger.LocalProcesses.Cast<EnvDTE.Process>().FirstOrDefault(process => process.ProcessID == applicationProcess.Id);
+                availableEngines = GetEngines((Debugger2) visualStudioInstance.Debugger).ToDictionary(e => e.ID);
+            }
 
-                //Attach to the process.
-                if (processToAttachTo != null)
-                {
-                    processToAttachTo.Attach();
+            //Find the process you want the VS instance to attach to...
+            EnvDTE.Process processToAttachTo = visualStudioInstance.Debugger.LocalProcesses.Cast<EnvDTE.Process>().FirstOrDefault(process => process.ProcessID == applicationProcess.Id);
 
-                    ShowWindow((int)visualStudioProcess.MainWindowHandle, 3);
-                    SetForegroundWindow(visualStudioProcess.MainWindowHandle);
-                }
-                else
-                {
-                    throw new InvalidOperationException("Visual Studio process cannot find specified application '" + applicationProcess.Id + "'");
-                }
+            //Attach to the process.
+            if (processToAttachTo != null)
+            {
+                var selectedEngines = engines.Select(e => availableEngines[e]);
+                var process3 = (EnvDTE90.Process3)processToAttachTo;
+                process3.Attach2(selectedEngines);
+
+                ShowWindow((int)visualStudioProcess.MainWindowHandle, 3);
+                SetForegroundWindow(visualStudioProcess.MainWindowHandle);
+            }
+            else
+            {
+                throw new InvalidOperationException("Visual Studio process cannot find specified application '" + applicationProcess.Id + "'");
             }
         }
 
@@ -212,6 +186,15 @@ namespace AttachR.Engine
 
             instance = null;
             return false;
+        }
+
+        private static IEnumerable<EnvDTE80.Engine> GetEngines(Debugger2 debugger)
+        {
+            var engines = debugger.Transports.Item("Default").Engines;
+            foreach (var x in engines)
+            {
+                yield return (EnvDTE80.Engine)x;
+            }
         }
     }
 }

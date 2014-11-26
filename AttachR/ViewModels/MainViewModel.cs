@@ -18,6 +18,7 @@ namespace AttachR.ViewModels
         private readonly Maestro maestro = new Maestro();
         private readonly FileManager fileManager = new FileManager();
         private readonly object debuggingProfileLock = new object();
+
         // ReSharper disable once NotAccessedField.Local
         private Timer timer;
 

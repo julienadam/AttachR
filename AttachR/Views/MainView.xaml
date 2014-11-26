@@ -131,6 +131,7 @@
                                     <ColumnDefinition Width="30" />
                                     <ColumnDefinition Width="60" />
                                     <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
                                     <ColumnDefinition Width="40" />
                                     <ColumnDefinition Width="65" />
                                 </Grid.ColumnDefinitions>
@@ -154,12 +155,12 @@
                                     <TextBlock Margin="3">Pid:</TextBlock>
                                     <TextBlock Margin="3" x:Name="CurrentProcessId" Text="{Binding Path=CurrentProcessId, Mode=OneWay}"/>
                                 </StackPanel>
-                                <TextBox Grid.Column="2" Grid.Row="0" Margin="3" 
+                                <TextBox Grid.Column="2" Grid.Row="0" Grid.ColumnSpan="2" Margin="3" 
                                          x:Name="Executable" 
                                          Text="{Binding Path=Executable, Mode=TwoWay}" 
                                          controls:TextboxHelper.Watermark="Full path to executable"
                                          HorizontalContentAlignment="Stretch"/>
-                                <Button Grid.Column="3" Grid.Row="0" Margin="3" 
+                                <Button Grid.Column="4" Grid.Row="0" Margin="3" 
                                         cal:Message.Attach="[Event Click] = [Action BrowseForExe($dataContext)]"
                                         Style="{DynamicResource SquareButtonStyle}">
                                     ...
@@ -168,9 +169,14 @@
                                          Text="{Binding Path=CommandLineArguments, Mode=TwoWay}" 
                                          x:Name="CommandLineArguments"
                                          controls:TextboxHelper.Watermark="Enter command line arguments here" />
-                                <Button Grid.Column="3" Grid.Row="1" Margin="3" Style="{DynamicResource SquareButtonStyle}">...</Button>
 
-                                <StackPanel Grid.Column="4" Grid.Row="0" Orientation="Horizontal">
+                                <ComboBox Grid.Column="3" Grid.Row="1" Margin="3" 
+                                          Name="DebuggingEngines" 
+                                          DisplayMemberPath="Name"
+                                          ItemsSource="{x:Static viewModels:DebuggingEngines.AvailableModes}" 
+                                          SelectedItem="{Binding DebuggingEngine}" />
+                                
+                                <StackPanel Grid.Column="5" Grid.Row="0" Orientation="Horizontal">
                                     <Button cal:Message.Attach="[Event Click] = [Action Start($dataContext)]" 
                                             Margin="3" HorizontalAlignment="Center" ToolTip="Start this application" 
                                             Visibility="{Binding CurrentProcess, Converter={StaticResource isNullOrEmptyConverter}}"
@@ -187,7 +193,7 @@
                                     </Button>
                                 </StackPanel>
 
-                                <Button Grid.Column="4" Grid.Row="1" Margin="3" 
+                                <Button Grid.Column="5" Grid.Row="1" Margin="3" 
                                         cal:Message.Attach="[Event Click] = [Action RemoveExecutable($dataContext)]"
                                         Style="{DynamicResource SquareButtonStyle}">
                                     <Image Source="/Views/Media/glyphicons_016_bin.png" Width="16" Height="18"  />

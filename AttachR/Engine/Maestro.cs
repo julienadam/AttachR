@@ -58,7 +58,7 @@ namespace AttachR.Engine
 
                     try
                     {
-                        Retrier.RunWithRetryOnException(() => VisualStudioAttacher.AttachVisualStudioToProcess(visualStudioProcess, process));
+                        Retrier.RunWithRetryOnException(() => VisualStudioAttacher.AttachVisualStudioToProcess(visualStudioProcess, process, localTarget.DebuggingEngine.Id.ToString()));
                     }
                     catch (AggregateException ex)
                     {

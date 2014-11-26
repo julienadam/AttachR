@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows.Media;
 using Newtonsoft.Json;
@@ -14,6 +15,12 @@ namespace AttachR.ViewModels
         private Process currentProcess;
         private ImageSource icon;
         private bool selected;
+        private DebuggingEngine debuggingEngine;
+
+        public DebuggingTarget()
+        {
+            DebuggingEngine = DebuggingEngines.AvailableModes.First();
+        }
 
         [JsonIgnore]
         public ImageSource Icon
@@ -65,6 +72,20 @@ namespace AttachR.ViewModels
                 }
             }
         }
+
+        public DebuggingEngine DebuggingEngine
+        {
+            get { return debuggingEngine; }
+            set
+            {
+                if (debuggingEngine != value)
+                {
+                    debuggingEngine = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
 
         public TimeSpan Delay { get; set; }
 
