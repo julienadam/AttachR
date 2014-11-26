@@ -2,14 +2,13 @@
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Windows.Media;
 using Caliburn.Micro;
 using Newtonsoft.Json;
 
 namespace AttachR.ViewModels
 {
-    public class DebuggingTargetViewModel : Screen, INotifyPropertyChanged
+    public class DebuggingTargetViewModel : Screen
     {
         private string executable;
         private string commandLineArguments;
@@ -36,7 +35,7 @@ namespace AttachR.ViewModels
             set
             {
                 icon = value;
-                OnPropertyChanged();
+                NotifyOfPropertyChange();
             }
         }
 
@@ -48,7 +47,7 @@ namespace AttachR.ViewModels
                 if (selected != value)
                 {
                     selected = value;
-                    OnPropertyChanged();
+                    NotifyOfPropertyChange();
                 }
             }
         }
@@ -62,7 +61,7 @@ namespace AttachR.ViewModels
                 {
                     executable = value;
                     Icon = IconLoader.LoadIcon(value);
-                    OnPropertyChanged();
+                    NotifyOfPropertyChange();
                 }
             }
         }
@@ -75,7 +74,7 @@ namespace AttachR.ViewModels
                 if (commandLineArguments != value)
                 {
                     commandLineArguments = value;
-                    OnPropertyChanged();
+                    NotifyOfPropertyChange();
                 }
             }
         }
@@ -91,32 +90,28 @@ namespace AttachR.ViewModels
                 if (currentProcess != value)
                 {
                     currentProcess = value;
-                    OnPropertyChanged("CurrentProcessId");
-                    OnPropertyChanged();
+                    NotifyOfPropertyChange("CurrentProcessId");
+                    NotifyOfPropertyChange();
                 }
             }
         }
-
-        public event PropertyChangedEventHandler PropertyChanged;
 
         [JsonIgnore]
         public string CurrentProcessId
         {
             get { return CurrentProcess != null ? CurrentProcess.Id.ToString() : "None"; }
         }
-
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            var handler = PropertyChanged;
-            if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
-        }
-
-
+        
         private readonly BindingList<DebuggingEngineViewModel> debuggingEngines;
 
         public BindingList<DebuggingEngineViewModel> DebuggingEngines
         {
             get { return debuggingEngines; }
+        }
+
+        public void Closing()
+        {
+            
         }
 
         public void Ok()
