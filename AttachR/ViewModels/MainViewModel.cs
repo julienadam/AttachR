@@ -343,7 +343,13 @@ namespace AttachR.ViewModels
 
         public void EditExecutable(DebuggingTargetViewModel target)
         {
-            windowManager.ShowDialog(target);
+            var clone = (DebuggingTargetViewModel) target.Clone();
+            if (windowManager.ShowDialog(clone) == true)
+            {
+                var index = DebuggingProfile.Targets.IndexOf(target);
+                DebuggingProfile.Targets.RemoveAt(index);
+                DebuggingProfile.Targets.Insert(index, clone);
+            }
         }
     }
 }

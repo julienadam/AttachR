@@ -1,6 +1,8 @@
+using System;
+
 namespace AttachR.ViewModels
 {
-    public class DebuggingEngineViewModel : DebuggingEngine
+    public class DebuggingEngineViewModel : DebuggingEngine, ICloneable
     {
         private bool selected;
 
@@ -13,6 +15,16 @@ namespace AttachR.ViewModels
                 selected = value;
                 OnPropertyChanged();
             }
+        }
+
+        public object Clone()
+        {
+            return new DebuggingEngineViewModel()
+            {
+                Id = Id,
+                Selected = Selected,
+                Name = Name
+            };
         }
     }
 }

@@ -8,7 +8,7 @@ using Newtonsoft.Json;
 
 namespace AttachR.ViewModels
 {
-    public class DebuggingTargetViewModel : Screen
+    public class DebuggingTargetViewModel : Screen, ICloneable
     {
         private string executable;
         private string commandLineArguments;
@@ -26,6 +26,11 @@ namespace AttachR.ViewModels
                         Name = x.Name,
                         Selected = false,
                     }).ToList());
+        }
+
+        private DebuggingTargetViewModel(BindingList<DebuggingEngineViewModel> engines)
+        {
+            debuggingEngines = engines;
         }
 
         [JsonIgnore]
@@ -122,6 +127,21 @@ namespace AttachR.ViewModels
         public void Cancel()
         {
             TryClose(false);
+        }
+
+        public object Clone()
+        {
+            var list = DebuggingEngines.Select(e => (DebuggingEngineViewModel) e.Clone()).ToList();
+            return 
+                new DebuggingTargetViewModel(new BindingList<DebuggingEngineViewModel>(list))
+                {
+                    Delay = Delay,
+                    Executable = Executable,
+                    Icon = Icon,
+                    CommandLineArguments = CommandLineArguments,
+                    CurrentProcess = CurrentProcess,
+                    Selected = Selected
+                };
         }
     }
 }
