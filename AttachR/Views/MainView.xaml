@@ -133,7 +133,7 @@
                             <Grid Width="Auto" Height="Auto" DockPanel.Dock="Top">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="30" />
-                                    <ColumnDefinition Width="60" />
+                                    <ColumnDefinition Width="70"  />
                                     <ColumnDefinition Width="*" />
                                     <ColumnDefinition Width="60" />
                                     <ColumnDefinition Width="60" />
@@ -172,6 +172,7 @@
                                         <RowDefinition Height="15" />
                                         <RowDefinition Height="15" />
                                         <RowDefinition Height="15" />
+                                        <RowDefinition Height="15" />
                                     </Grid.RowDefinitions>
 
                                     <TextBlock Grid.Column="0" Grid.Row="0">Executable : </TextBlock>
@@ -182,6 +183,9 @@
 
                                     <TextBlock Grid.Column="0" Grid.Row="2">Arguments : </TextBlock>
                                     <TextBlock Grid.Column="1" Grid.Row="2" Text="{Binding CommandLineArguments}" />
+                                    
+                                    <TextBlock Grid.Column="0" Grid.Row="3">Last error : </TextBlock>
+                                    <TextBlock Grid.Column="1" Grid.Row="3" Text="{Binding LastError}" />
                                 </Grid>
                                 
                                 

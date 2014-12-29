@@ -60,9 +60,12 @@ namespace AttachR.Engine
                     {
                         var engineModes = localTarget.DebuggingEngines.Where(x => x.Selected).Select(x => x.Name).ToArray();
                         Retrier.RunWithRetryOnException(() => VisualStudioAttacher.AttachVisualStudioToProcess(visualStudioProcess, process, engineModes));
+                        localTarget.LastError = null;
                     }
                     catch (AggregateException ex)
                     {
+                        localTarget.LastError = ex.Message;
+
                         return new RunResult
                         {
                             Message = string.Format("Errors while attaching process {0} to VS.NET. Errors : {1}",

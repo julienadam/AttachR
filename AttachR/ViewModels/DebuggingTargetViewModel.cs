@@ -13,6 +13,7 @@ namespace AttachR.ViewModels
         private string executable;
         private string workingDirectory;
         private string commandLineArguments;
+        private string lastError;
         private Process currentProcess;
         private ImageSource icon;
         private bool selected;
@@ -98,6 +99,19 @@ namespace AttachR.ViewModels
             }
         }
 
+        public string LastError
+        {
+            get { return lastError; }
+            set
+            {
+                if (lastError != value)
+                {
+                    lastError = value;
+                    NotifyOfPropertyChange();
+                }
+            }
+        }
+
         public TimeSpan Delay { get; set; }
 
         [JsonIgnore]
@@ -170,6 +184,7 @@ namespace AttachR.ViewModels
                     Delay = Delay,
                     Executable = Executable,
                     WorkingDirectory = WorkingDirectory,
+                    LastError = LastError,
                     Icon = Icon,
                     CommandLineArguments = CommandLineArguments,
                     CurrentProcess = CurrentProcess,
