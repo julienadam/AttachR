@@ -129,12 +129,12 @@
                      HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
-                        <DockPanel>
-                            <Grid Width="Auto" Height="Auto" DockPanel.Dock="Top">
+                        <DockPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                            <Grid DockPanel.Dock="Top" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" >
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="30" />
                                     <ColumnDefinition Width="70"  />
-                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*"/>
                                     <ColumnDefinition Width="60" />
                                     <ColumnDefinition Width="60" />
                                     <ColumnDefinition Width="60" />
@@ -176,16 +176,16 @@
                                     </Grid.RowDefinitions>
 
                                     <TextBlock Grid.Column="0" Grid.Row="0">Executable : </TextBlock>
-                                    <TextBlock Grid.Column="1" Grid.Row="0" Text="{Binding Executable}" />
+                                    <TextBlock Grid.Column="1" Grid.Row="0" Text="{Binding Executable}" ToolTip="{Binding Executable}" TextTrimming="CharacterEllipsis"/>
                                 
                                     <TextBlock Grid.Column="0" Grid.Row="1">Working directory : </TextBlock>
-                                    <TextBlock Grid.Column="1" Grid.Row="1" Text="{Binding WorkingDirectory}" />
+                                    <TextBlock Grid.Column="1" Grid.Row="1" Text="{Binding WorkingDirectory}" ToolTip="{Binding WorkingDirectory}" TextTrimming="CharacterEllipsis"/>
 
                                     <TextBlock Grid.Column="0" Grid.Row="2">Arguments : </TextBlock>
-                                    <TextBlock Grid.Column="1" Grid.Row="2" Text="{Binding CommandLineArguments}" />
+                                    <TextBlock Grid.Column="1" Grid.Row="2" Text="{Binding CommandLineArguments}" ToolTip="{Binding CommandLineArguments}" TextTrimming="CharacterEllipsis"/>
                                     
                                     <TextBlock Grid.Column="0" Grid.Row="3">Last error : </TextBlock>
-                                    <TextBlock Grid.Column="1" Grid.Row="3" Text="{Binding LastError}" />
+                                    <TextBlock Grid.Column="1" Grid.Row="3" Text="{Binding LastError}" ToolTip="{Binding LastError}" TextTrimming="CharacterEllipsis"/>
                                 </Grid>
                                 
                                 
@@ -218,9 +218,7 @@
                                     <Image Source="/Views/Media/glyphicons_016_bin.png" Width="16"  />
                                 </Button>
                             </Grid>
-                            <DockPanel DockPanel.Dock="Top">
-                                <Separator />
-                            </DockPanel>
+                            <Separator DockPanel.Dock="Top"/>
                         </DockPanel>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
