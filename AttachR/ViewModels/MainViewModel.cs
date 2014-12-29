@@ -221,7 +221,7 @@ namespace AttachR.ViewModels
 
         public void Open(object sender, RoutedEventArgs e)
         {
-            var profileFile = ShowOpenDialog("Debug profiles", ".dpf");
+            var profileFile = DialogHelper.ShowOpenDialog("Debug profiles", ".dpf", null);
             if (profileFile != null)
             {
                 FileOpenCore(profileFile);
@@ -233,28 +233,6 @@ namespace AttachR.ViewModels
             FileOpenCore(recentItemClicked.Filepath);
         }
 
-        private static string ShowOpenDialog(string fileTypeDescription, string fileTypeExtension)
-        {
-            var dialog = new OpenFileDialog
-            {
-                Filter = string.Format("{0}|{1}|All files|*.*", fileTypeDescription, fileTypeExtension),
-                FilterIndex = 0,
-                CheckFileExists = true,
-                CheckPathExists = true,
-                ValidateNames = true,
-            };
-
-            return dialog.ShowDialog() == true ? dialog.FileName : null;
-        }
-
-        public void BrowseForExe(DebuggingTarget target)
-        {
-            var executableFile = ShowOpenDialog("Executable files", "*.exe");
-            if (executableFile != null)
-            {
-                target.Executable = executableFile;
-            }
-        }
 
         public void RunAll()
         {
@@ -286,8 +264,11 @@ namespace AttachR.ViewModels
         {
             lock (debuggingProfileLock)
             {
-                //TODO: show window, add after.
-                DebuggingProfile.Targets.Add(new DebuggingTargetViewModel());
+                var newModel = new DebuggingTargetViewModel();
+                if (windowManager.ShowDialog(newModel) == true)
+                {
+                    DebuggingProfile.Targets.Add(newModel);
+                }
             }
         }
         
@@ -301,7 +282,7 @@ namespace AttachR.ViewModels
 
         public void BrowseForSolution()
         {
-            var solutionFile = ShowOpenDialog("Solution files", "*.sln");
+            var solutionFile = DialogHelper.ShowOpenDialog("Solution files", "*.sln", DebuggingProfile.VisualStudioSolutionPath);
             if (solutionFile != null)
             {
                 DebuggingProfile.VisualStudioSolutionPath = solutionFile;

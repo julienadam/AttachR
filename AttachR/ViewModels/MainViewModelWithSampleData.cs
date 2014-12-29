@@ -16,12 +16,12 @@ namespace AttachR.ViewModels
                 {
                     CommandLineArguments = "Some arguments",
                     Executable = @"C:\Windows\notepad.exe",
+                    WorkingDirectory = @"C:\Windows\Temp\",
                     Selected = true
                 },
                 new DebuggingTargetViewModel
                 {
                     CommandLineArguments = "Other arguments",
-                    Executable = @"C:\Windows\System32\Cmd.exe",
                 },
             };
         }

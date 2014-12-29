@@ -43,7 +43,10 @@ namespace AttachR.Engine
 
             foreach (var t in targets.Where(tr => tr.Selected && tr.CurrentProcess == null))
             {
-                var psi = new ProcessStartInfo(t.Executable, t.CommandLineArguments);
+                var psi = new ProcessStartInfo(t.Executable, t.CommandLineArguments)
+                {
+                    WorkingDirectory = t.WorkingDirectory
+                };
                 var process = Process.Start(psi);
                 var localTarget = t;
                 if (process != null)

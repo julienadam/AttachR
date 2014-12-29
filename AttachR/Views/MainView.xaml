@@ -163,10 +163,27 @@
                                     </StackPanel>
                                 </StackPanel>
 
-                                <StackPanel Grid.Column="2" Grid.Row="0">
-                                    <TextBlock Text="{Binding Executable}" />
-                                    <TextBlock Text="{Binding CommandLineArguments}" />
-                                </StackPanel>
+                                <Grid Grid.Column="2" Grid.Row="0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="110" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="15" />
+                                        <RowDefinition Height="15" />
+                                        <RowDefinition Height="15" />
+                                    </Grid.RowDefinitions>
+
+                                    <TextBlock Grid.Column="0" Grid.Row="0">Executable : </TextBlock>
+                                    <TextBlock Grid.Column="1" Grid.Row="0" Text="{Binding Executable}" />
+                                
+                                    <TextBlock Grid.Column="0" Grid.Row="1">Working directory : </TextBlock>
+                                    <TextBlock Grid.Column="1" Grid.Row="1" Text="{Binding WorkingDirectory}" />
+
+                                    <TextBlock Grid.Column="0" Grid.Row="2">Arguments : </TextBlock>
+                                    <TextBlock Grid.Column="1" Grid.Row="2" Text="{Binding CommandLineArguments}" />
+                                </Grid>
+                                
                                 
                                 <Button Grid.Column="3" Grid.Row="0" Width="50" Height="50" Name="Run"
                                         DockPanel.Dock="Right"

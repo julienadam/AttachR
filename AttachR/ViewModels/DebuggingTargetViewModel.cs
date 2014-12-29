@@ -11,6 +11,7 @@ namespace AttachR.ViewModels
     public class DebuggingTargetViewModel : Screen, ICloneable
     {
         private string executable;
+        private string workingDirectory;
         private string commandLineArguments;
         private Process currentProcess;
         private ImageSource icon;
@@ -71,6 +72,19 @@ namespace AttachR.ViewModels
             }
         }
 
+        public string WorkingDirectory
+        {
+            get { return workingDirectory; }
+            set
+            {
+                if (workingDirectory != value)
+                {
+                    workingDirectory = value;
+                    NotifyOfPropertyChange();
+                }
+            }
+        }
+
         public string CommandLineArguments
         {
             get { return commandLineArguments; }
@@ -119,6 +133,24 @@ namespace AttachR.ViewModels
             
         }
 
+        public void BrowseForExe(DebuggingTargetViewModel target)
+        {
+            var executableFile = DialogHelper.ShowOpenDialog("Executable files", "*.exe", target.Executable);
+            if (executableFile != null)
+            {
+                target.Executable = executableFile;
+            }
+        }
+
+        public void BrowseForDirectory(DebuggingTargetViewModel target)
+        {
+            var folder = DialogHelper.ShowFolderDialog("Working directory", target.WorkingDirectory);
+            if (folder != null)
+            {
+                target.WorkingDirectory = folder;
+            }
+        }
+
         public void Ok()
         {
             TryClose(true);
@@ -137,6 +169,7 @@ namespace AttachR.ViewModels
                 {
                     Delay = Delay,
                     Executable = Executable,
+                    WorkingDirectory = WorkingDirectory,
                     Icon = Icon,
                     CommandLineArguments = CommandLineArguments,
                     CurrentProcess = CurrentProcess,
