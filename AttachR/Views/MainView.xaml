@@ -213,7 +213,7 @@
                                 
                                 <Button Grid.Column="6" Grid.Row="0" Width="50" Height="50" Name="Remove"
                                         cal:Message.Attach="[Event Click] = [Action RemoveExecutable($dataContext)]"
-                                        ToolTip="Stop this application"
+                                        ToolTip="Remove this application configuration"
                                         Style="{DynamicResource MetroCircleButtonStyle}">
                                     <Image Source="/Views/Media/glyphicons_016_bin.png" Width="16"  />
                                 </Button>

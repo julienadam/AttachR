@@ -10,7 +10,7 @@ namespace AttachR.ViewModels
         {
             var dialog = new OpenFileDialog
             {
-                Filter = String.Format("{0}|{1}|All files|*.*", fileTypeDescription, fileTypeExtension),
+                Filter = String.Format("{0}|*{1}|All files|*.*", fileTypeDescription, fileTypeExtension),
                 FilterIndex = 0,
                 CheckFileExists = true,
                 CheckPathExists = true,
