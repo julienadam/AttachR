@@ -1,8 +1,10 @@
 FEATURES:
-- Checkboxes before each .exe to customize running only part of the profile. Save this in the profile.
 - Auto-load last profile
-- Register extension
-- Installer (cf. above)
+- Auto-start on login
+- Register extension for double clicking profile files
+- Allow configuration of hotkeys
+- Add command line argument to load a specified profile file
+- Installer
 
 BUGS:
 -Fix the length of the arguments textbox causing the whole listbox to overflow and display scrollbars
