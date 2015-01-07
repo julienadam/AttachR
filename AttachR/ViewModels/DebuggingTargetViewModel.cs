@@ -17,7 +17,7 @@ namespace AttachR.ViewModels
         private Process currentProcess;
         private ImageSource icon;
         private bool selected;
-        
+
         public DebuggingTargetViewModel()
         {
             debuggingEngines = new BindingList<DebuggingEngineViewModel>(
@@ -188,7 +188,7 @@ namespace AttachR.ViewModels
                     Icon = Icon,
                     CommandLineArguments = CommandLineArguments,
                     CurrentProcess = CurrentProcess,
-                    Selected = Selected
+                    Selected = Selected,
                 };
         }
     }

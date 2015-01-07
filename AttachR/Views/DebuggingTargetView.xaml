@@ -70,7 +70,7 @@
                 x:Name="CommandLineArguments"
                 controls:TextboxHelper.Watermark="Enter command line arguments here" />
         </GroupBox>
-        <GroupBox Header="Debugging modes" Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="2">
+        <GroupBox Header="Debugging (uncheck all to skip attaching a debugger)" Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="2">
             <ListBox ItemsSource="{Binding DebuggingEngines, Mode=OneWay}">
                 <ListBox.ItemTemplate>
                     <DataTemplate>

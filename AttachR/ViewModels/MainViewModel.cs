@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Windows;
@@ -291,8 +292,7 @@ namespace AttachR.ViewModels
 
         public void Start(DebuggingTargetViewModel target)
         {
-            DebuggingProfileViewModel profile = DebuggingProfile;
-            var result = maestro.Run(profile.VisualStudioSolutionPath, profile.Targets, target);
+            var result = maestro.Run(DebuggingProfile.VisualStudioSolutionPath, new List<DebuggingTargetViewModel>{ target });
             Error = result.Message;
         }
 

@@ -9,37 +9,40 @@ namespace AttachR.Engine
 {
     public class Maestro
     {
-        public RunResult Run(string visualStudioSolutionPath, IEnumerable<DebuggingTargetViewModel> debuggingTargets, DebuggingTargetViewModel singleTarget = null)
+        public RunResult Run(string visualStudioSolutionPath, IEnumerable<DebuggingTargetViewModel> debuggingTargets)
         {
-            var solutionName = Path.GetFileName(visualStudioSolutionPath);
+            var targets = debuggingTargets.ToList();
+            bool requiresVisualStudio = targets.SelectMany(t => t.DebuggingEngines).Any();
+            Process visualStudioProcess= null;
 
-            Process visualStudioProcess;
-            try
+            if (requiresVisualStudio)
             {
-                visualStudioProcess = Retrier.RunWithRetryOnException(() => VisualStudioAttacher.GetVisualStudioForSolution(solutionName));
-            }
-            catch (AggregateException ex)
-            {
-                return new RunResult
+                var solutionName = Path.GetFileName(visualStudioSolutionPath);
+                
+                try
                 {
-                    Message = string.Format("Errors while looking for VS.NET instances {0}. Errors : {1}", 
-                    visualStudioSolutionPath,
-                    String.Join(". ", ex.InnerExceptions.Select(e => e.Message).ToArray()))
-                };
-            }
-            
-            if (visualStudioProcess == null)
-            {
-                return new RunResult
+                    visualStudioProcess = Retrier.RunWithRetryOnException(() => VisualStudioAttacher.GetVisualStudioForSolution(solutionName));
+                }
+                catch (AggregateException ex)
                 {
-                    Message = string.Format("No visual studio instance found with solution {0}", visualStudioSolutionPath)
-                };
+                    return new RunResult
+                    {
+                        Message = string.Format("Errors while looking for VS.NET instances {0}. Errors : {1}",
+                            visualStudioSolutionPath,
+                            String.Join(". ", ex.InnerExceptions.Select(e => e.Message).ToArray()))
+                    };
+                }
+
+                if (visualStudioProcess == null)
+                {
+                    return new RunResult
+                    {
+                        Message =
+                            string.Format("No visual studio instance found with solution {0}", visualStudioSolutionPath)
+                    };
+                }
             }
 
-            IEnumerable<DebuggingTargetViewModel> targets = 
-                singleTarget != null
-                ? new List<DebuggingTargetViewModel> { singleTarget }
-                : debuggingTargets.ToList();
 
             foreach (var t in targets.Where(tr => tr.Selected && tr.CurrentProcess == null))
             {
@@ -51,15 +54,15 @@ namespace AttachR.Engine
                 var localTarget = t;
                 if (process != null)
                 {
-                    process.Exited += (sender, args) =>
-                    {
-                        localTarget.CurrentProcess = null;
-                    };
+                    process.Exited += (_, __) => localTarget.CurrentProcess = null;
 
                     try
                     {
                         var engineModes = localTarget.DebuggingEngines.Where(x => x.Selected).Select(x => x.Name).ToArray();
-                        Retrier.RunWithRetryOnException(() => VisualStudioAttacher.AttachVisualStudioToProcess(visualStudioProcess, process, engineModes));
+                        if (engineModes.Any())
+                        {
+                            Retrier.RunWithRetryOnException(() => VisualStudioAttacher.AttachVisualStudioToProcess(visualStudioProcess, process, engineModes));
+                        }
                         localTarget.LastError = null;
                     }
                     catch (AggregateException ex)
@@ -82,7 +85,7 @@ namespace AttachR.Engine
 
         public RunResult Stop(DebuggingProfileViewModel profile)
         {
-            var results = profile.Targets.ToList().Select(t => Stop(t).Message).ToArray();
+            var results = profile.Targets.Where(t=>t.Selected).ToList().Select(t => Stop(t).Message).ToArray();
             return new RunResult
             {
                 Message = String.Join(". ", results)
