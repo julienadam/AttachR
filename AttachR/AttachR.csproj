@@ -128,6 +128,7 @@
     <Compile Include="Components\MinimizeToTray.cs" />
     <Compile Include="Components\Recent\IRecentFileListPersister.cs" />
     <Compile Include="Components\Recent\RegistryPersister.cs" />
+    <Compile Include="Components\SingleInstanceChecker.cs" />
     <Compile Include="Engine\Retrier.cs" />
     <Compile Include="IsNotNullOrEmptyConverter.cs" />
     <Compile Include="IsNullConverter.cs" />

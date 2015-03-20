@@ -1,14 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Threading;
 using AttachR.Commands;
 using AttachR.Components;
 using AttachR.Components.Recent;
 using AttachR.ViewModels;
+using AttachR.Views;
 using Caliburn.Micro;
 using NHotkey;
 using NHotkey.Wpf;
+using Action = System.Action;
 
 namespace AttachR
 {
@@ -46,6 +50,11 @@ namespace AttachR
 
         protected override void OnStartup(object sender, StartupEventArgs e)
         {
+            if (!new SingleInstanceChecker().CheckSingleInstance(container))
+            {
+                return;
+            }
+
             DisplayRootViewFor<MainViewModel>();
             EventHandler<HotkeyEventArgs> runAllHandler = (o, args) =>
             {

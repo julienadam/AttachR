@@ -1,4 +1,7 @@
-﻿using System.Windows;
+﻿using System;
+using System.Threading;
+using System.Windows;
+using AttachR.Views;
 
 namespace AttachR
 {
@@ -7,6 +10,6 @@ namespace AttachR
     /// </summary>
     public partial class App : Application
     {
-       
+      
     }
 }
