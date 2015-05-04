@@ -36,6 +36,7 @@
                 <TextBox Grid.Row="0" Grid.Column="0"
                          Margin="3"
                          x:Name="Executable"
+                         controls:TextBoxHelper.Watermark="Full path to executable"
                          Text="{Binding Path=Executable, Mode=TwoWay}" />
                 <Button
                     Grid.Row="0" Grid.Column="1" Margin="3"
@@ -48,6 +49,7 @@
                 <TextBox Grid.Row="1" Grid.Column="0"
                          Margin="3"
                          x:Name="WorkingDirectory"
+                         controls:TextBoxHelper.Watermark="Working directory"
                          Text="{Binding Path=WorkingDirectory, Mode=TwoWay}" />
                 <Button
                     Grid.Row="1" Grid.Column="1" Margin="3"
@@ -66,7 +68,7 @@
                 TextWrapping="Wrap"
                 Text="{Binding Path=CommandLineArguments, Mode=TwoWay}"
                 x:Name="CommandLineArguments"
-                 />
+                controls:TextBoxHelper.Watermark="Enter command line arguments here" />
         </GroupBox>
         <GroupBox Header="Debugging (uncheck all to skip attaching a debugger)" Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="2">
             <ListBox ItemsSource="{Binding DebuggingEngines, Mode=OneWay}">
