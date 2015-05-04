@@ -16,12 +16,13 @@
                       Loaded="MainView_OnLoaded">
     <Window.Resources>
         <attachR:IsNullOrEmptyConverter x:Key="isNullOrEmptyConverter" />
-        <!--<attachR:IsNotNullOrEmptyConverter x:Key="isNotNullOrEmptyConverter" />-->
     </Window.Resources>
 
     <Window.CommandBindings>
         <CommandBinding Command="{x:Static commands:LocalCommands.RunAllCommand}"
                         Executed="CommandBinding_RunAll_OnExecuted" />
+        <CommandBinding Command="{x:Static commands:LocalCommands.DebugAllCommand}"
+                        Executed="CommandBinding_DebugAll_OnExecuted" />
         <CommandBinding Command="{x:Static commands:LocalCommands.StopAllCommand}"
                         Executed="CommandBinding_StopAll_OnExecuted" />
     </Window.CommandBindings>
@@ -120,6 +121,11 @@
                     Style="{DynamicResource MetroCircleButtonStyle}">
                 <Image Source="/Views/Media/glyphicons_173_play.png" Width="16" Height="18" />
             </Button>
+            <Button Width="50" Height="50" Name="DebugAll" DockPanel.Dock="Right"
+                    ToolTip="Runs all selected executables and attaches them to Visual Studio, except those that are already running."
+                    Style="{DynamicResource MetroCircleButtonStyle}">
+                <Image Source="/Views/Media/glyphicons_360_bug.png" Width="16" Height="18" />
+            </Button>
             <!-- Somehow required to actually dock the Run button on the right side ... -->
             <Label DockPanel.Dock="Right" />
         </DockPanel>
@@ -135,6 +141,7 @@
                                     <ColumnDefinition Width="30" />
                                     <ColumnDefinition Width="70"  />
                                     <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="60" />
                                     <ColumnDefinition Width="60" />
                                     <ColumnDefinition Width="60" />
                                     <ColumnDefinition Width="60" />
@@ -187,31 +194,37 @@
                                     <TextBlock Grid.Column="0" Grid.Row="3">Last error : </TextBlock>
                                     <TextBlock Grid.Column="1" Grid.Row="3" Text="{Binding LastError}" ToolTip="{Binding LastError}" TextTrimming="CharacterEllipsis"/>
                                 </Grid>
-                                
-                                
-                                <Button Grid.Column="3" Grid.Row="0" Width="50" Height="50" Name="Run"
+
+                                <Button Grid.Column="3" Grid.Row="0" Width="50" Height="50" Name="Debug"
                                         DockPanel.Dock="Right"
-                                        cal:Message.Attach="[Event Click] = [Action Start($dataContext)]"
-                                        ToolTip="Start this application"
+                                        cal:Message.Attach="[Event Click] = [Action Debug($dataContext)]"
+                                        ToolTip="Debug this application"
                                         Style="{DynamicResource MetroCircleButtonStyle}">
-                                    <Image Source="/Views/Media/glyphicons_173_play.png" Width="18"/>
+                                    <Image Source="/Views/Media/glyphicons_360_bug.png" Width="18"/>
                                 </Button>
 
-                                <Button Grid.Column="4" Grid.Row="0" Width="50" Height="50" Name="Stop"
+                                <Button Grid.Column="4" Grid.Row="0" Width="50" Height="50" Name="Run"
+                                        cal:Message.Attach="[Event Click] = [Action Run($dataContext)]"
+                                        ToolTip="Run this application without debugging"
+                                        Style="{DynamicResource MetroCircleButtonStyle}">
+                                    <Image Source="/Views/Media/glyphicons_173_play.png" Width="16" />
+                                </Button>
+                                
+                                <Button Grid.Column="5" Grid.Row="0" Width="50" Height="50" Name="Stop"
                                         cal:Message.Attach="[Event Click] = [Action Stop($dataContext)]"
                                         ToolTip="Stop this application"
                                         Style="{DynamicResource MetroCircleButtonStyle}">
                                     <Image Source="/Views/Media/glyphicons_175_stop.png" Width="16" />
                                 </Button>
 
-                                <Button Grid.Column="5" Grid.Row="0" Width="50" Height="50" Name="Edit"
+                                <Button Grid.Column="6" Grid.Row="0" Width="50" Height="50" Name="Edit"
                                         cal:Message.Attach="[Event Click] = [Action EditExecutable($dataContext)]"
                                         ToolTip="Edit advanced settings"
                                         Style="{DynamicResource MetroCircleButtonStyle}">
                                     <Image Source="/Views/Media/glyphicons_030_pencil.png" Width="22" />
                                 </Button> 
                                 
-                                <Button Grid.Column="6" Grid.Row="0" Width="50" Height="50" Name="Remove"
+                                <Button Grid.Column="7" Grid.Row="0" Width="50" Height="50" Name="Remove"
                                         cal:Message.Attach="[Event Click] = [Action RemoveExecutable($dataContext)]"
                                         ToolTip="Remove this application configuration"
                                         Style="{DynamicResource MetroCircleButtonStyle}">

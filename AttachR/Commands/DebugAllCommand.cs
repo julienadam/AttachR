@@ -2,7 +2,7 @@ using System.Windows.Input;
 
 namespace AttachR.Commands
 {
-    public class RunAllCommand : RoutedCommand
+    public class DebugAllCommand : RoutedCommand
     {
         public bool CanExecute(object parameter)
         {

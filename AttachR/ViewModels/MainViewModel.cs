@@ -237,9 +237,19 @@ namespace AttachR.ViewModels
 
         public void RunAll()
         {
+            RunOrDebugAll(false);
+        }
+
+        public void DebugAll()
+        {
+            RunOrDebugAll(true);
+        }
+        
+        private void RunOrDebugAll(bool debug)
+        {
             try
             {
-                RunResult result = maestro.Run(DebuggingProfile.VisualStudioSolutionPath, DebuggingProfile.Targets);
+                RunResult result = maestro.Run(DebuggingProfile.VisualStudioSolutionPath, DebuggingProfile.Targets, debug, false);
                 Error = result.Message;
             }
             catch (Exception ex)
@@ -247,6 +257,7 @@ namespace AttachR.ViewModels
                 Error = string.Format("Could not run all executables : {0}", ex.Message);
             }
         }
+
 
         public void StopAll()
         {
@@ -290,9 +301,15 @@ namespace AttachR.ViewModels
             }
         }
 
-        public void Start(DebuggingTargetViewModel target)
+        public void Debug(DebuggingTargetViewModel target)
         {
-            var result = maestro.Run(DebuggingProfile.VisualStudioSolutionPath, new List<DebuggingTargetViewModel>{ target });
+            var result = maestro.Run(DebuggingProfile.VisualStudioSolutionPath, new List<DebuggingTargetViewModel> { target }, true, true);
+            Error = result.Message;
+        }
+
+        public void Run(DebuggingTargetViewModel target)
+        {
+            var result = maestro.Run(DebuggingProfile.VisualStudioSolutionPath, new List<DebuggingTargetViewModel>{ target }, false, true);
             Error = result.Message;
         }
 
@@ -316,6 +333,11 @@ namespace AttachR.ViewModels
         {
             RunAll();
         }
+        
+        public void Handle(DebugAllCommand message)
+        {
+            DebugAll();
+        }
 
         public void Handle(StopAllCommand message)
         {
@@ -332,5 +354,6 @@ namespace AttachR.ViewModels
                 DebuggingProfile.Targets.Insert(index, clone);
             }
         }
+
     }
 }

@@ -9,19 +9,17 @@ namespace AttachR.Engine
 {
     public class Maestro
     {
-        public RunResult Run(string visualStudioSolutionPath, IEnumerable<DebuggingTargetViewModel> debuggingTargets)
+        public RunResult Run(string visualStudioSolutionPath, IEnumerable<DebuggingTargetViewModel> debuggingTargets, bool debug, bool runUnselected)
         {
             var targets = debuggingTargets.ToList();
-            bool requiresVisualStudio = targets.SelectMany(t => t.DebuggingEngines).Any();
-            Process visualStudioProcess= null;
+            bool requiresVisualStudio = debug && targets.SelectMany(t => t.DebuggingEngines).Any();
+            Process visualStudioProcess = null;
 
             if (requiresVisualStudio)
             {
-                var solutionName = Path.GetFileName(visualStudioSolutionPath);
-                
                 try
                 {
-                    visualStudioProcess = Retrier.RunWithRetryOnException(() => VisualStudioAttacher.GetVisualStudioForSolution(solutionName));
+                    visualStudioProcess = Retrier.RunWithRetryOnException(() => VisualStudioAttacher.GetVisualStudioForSolution(Path.GetFileName(visualStudioSolutionPath)));
                 }
                 catch (AggregateException ex)
                 {
@@ -44,15 +42,15 @@ namespace AttachR.Engine
             }
 
 
-            foreach (var t in targets.Where(tr => tr.Selected && tr.CurrentProcess == null))
+            foreach (var target in targets.Where(tr => (runUnselected || tr.Selected) && tr.CurrentProcess == null))
             {
-                var psi = new ProcessStartInfo(t.Executable, t.CommandLineArguments)
+                var psi = new ProcessStartInfo(target.Executable, target.CommandLineArguments)
                 {
-                    WorkingDirectory = t.WorkingDirectory
+                    WorkingDirectory = target.WorkingDirectory
                 };
                 var process = Process.Start(psi);
-                var localTarget = t;
-                if (process != null)
+                var localTarget = target;
+                if (process != null && debug)
                 {
                     process.Exited += (_, __) => localTarget.CurrentProcess = null;
 
@@ -72,13 +70,13 @@ namespace AttachR.Engine
                         return new RunResult
                         {
                             Message = string.Format("Errors while attaching process {0} to VS.NET. Errors : {1}",
-                            t.Executable,
+                            target.Executable,
                             String.Join(". ", ex.InnerExceptions.Select(e => e.Message).ToArray()))
                         };
                     }
                     
                 }
-                t.CurrentProcess = process;
+                target.CurrentProcess = process;
             }
             return new RunResult();
         }
