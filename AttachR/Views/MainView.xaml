@@ -54,7 +54,6 @@
                 </Grid.RowDefinitions>
                 <Label Grid.Column="0" Grid.Row="0">Solution :</Label>
                 <TextBox Margin="3" Name="TextBoxSolution"
-                         controls:TextboxHelper.Watermark="Full path to .sln"
                          Text="{Binding Path=DebuggingProfile.VisualStudioSolutionPath, Mode=TwoWay}" Grid.Column="1"
                          Grid.Row="0" />
                 <Button Margin="4" Grid.Column="2" Grid.Row="0" x:Name="BrowseForSolution"
