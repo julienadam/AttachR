@@ -1,6 +1,6 @@
 ﻿#AttachR
 
-![AttachR build status on AppVeyor](https://ci.appveyor.com/api/projects/status/n5avheg2xxyqoldr?svg=true)
+[![AttachR build status on AppVeyor](https://ci.appveyor.com/api/projects/status/n5avheg2xxyqoldr?svg=true)](https://ci.appveyor.com/project/julienadam/attachr/history)
 
 AttachR is a simple tool that launches executables and automatically attaches them to a running instance of visual studio that is currently open on a specific solution.
 
