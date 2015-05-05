@@ -96,7 +96,7 @@ namespace AttachR.Engine
             {
                 return new RunResult
                 {
-                    Message = string.Format("Process was already killed")
+                    Message = "Process was already killed"
                 };
             }
 

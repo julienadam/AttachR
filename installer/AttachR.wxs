@@ -1,0 +1,55 @@
+<?xml version='1.0' encoding='windows-1252'?>
+<Wix xmlns='http://schemas.microsoft.com/wix/2006/wi'>
+  <Product Name='AttachR' Id='8489C675-C46B-4A0F-8CE3-662931EDE976' UpgradeCode='BFAF073B-5DD6-4F0A-BCB2-CD05BF10D6F9'
+    Language='1033' Codepage='1252' Version='1.0.0' Manufacturer='Julien Adam'>
+    <Package Id='*' Keywords='Installer' Description="AttachR Installer"
+      Comments='Open source software by Julien Adam' Manufacturer='Julien Adam'
+      InstallerVersion='100' Languages='1033' Compressed='yes' SummaryCodepage='1252' />
+
+    <Media Id='1' Cabinet='attachr.cab' EmbedCab='yes' DiskPrompt="CD-ROM #1" />
+    <Icon Id="AttachR.exe" SourceFile="..\AttachR\bin\release\AttachR.exe" />
+    <Property Id='DiskPrompt' Value="AttachR Installation [1]" />
+    <Property Id="ARPPRODUCTICON" Value="AttachR.exe" />
+    <Property Id="ARPHELPLINK" Value="https://github.com/julienadam/AttachR" />
+    <Property Id="WIXUI_INSTALLDIR" Value="INSTALLDIR" />
+    <PropertyRef Id="NETFRAMEWORK45"/>
+    <Condition Message='This setup requires the .NET Framework 4.5.1 installed.'>
+      <![CDATA[Installed OR NETFRAMEWORK45 >= "#378675"]]>
+    </Condition>
+    <UIRef Id="WixUI_Minimal" />
+    <UIRef Id="WixUI_ErrorProgressText" />
+    <WixVariable Id="WixUILicenseRtf" Value="License.rtf" />
+  
+    
+  
+    <Directory Id='TARGETDIR' Name='SourceDir'>
+      <Directory Id='ProgramFilesFolder' Name='PFiles'>
+        <Directory Id='INSTALLDIR' Name='AttachR'>
+          <Component Id='MainExecutable' Guid='CC2E0F95-194E-4CEA-8C7D-995B26860EB2'>
+            <File Id='attachrEXE' Name='AttachR.exe' DiskId='1' Source='..\AttachR\bin\release\AttachR.exe' KeyPath='yes'>
+              <Shortcut Id="desktopFoobar10" Directory="DesktopFolder" Name="AttachR" WorkingDirectory='INSTALLDIR' Icon="AttachR.exe" IconIndex="0" Advertise="yes" />
+            </File>
+          </Component>
+        </Directory>
+      </Directory>
+
+      <Directory Id="ProgramMenuFolder" Name="Programs">
+        <Directory Id="ProgramMenuDir" Name="AttachR">
+          <Component Id="ProgramMenuDir" Guid="7424F5F3-0069-4D2B-9E32-2384DFE23DB6">
+            <RemoveFolder Id='ProgramMenuDir' On='uninstall' />
+            <RegistryValue Root='HKCU' Key='Software\[Manufacturer]\[ProductName]' Type='string' Value='' KeyPath='yes' />
+          </Component>
+        </Directory>
+      </Directory>
+
+      <Directory Id="DesktopFolder" Name="Desktop" />
+    </Directory>
+
+    <Feature Id='Complete' Level='1'>
+      <ComponentGroupRef  Id='AttachRFiles' />
+      <ComponentRef Id='ProgramMenuDir' />
+      <ComponentRef Id='MainExecutable' />
+    </Feature>
+
+  </Product>
+</Wix>
