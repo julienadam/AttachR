@@ -178,8 +178,6 @@ namespace AttachR.Engine
 
                 object runningObjectVal;
                 runningObjectTable.GetObject(monikers[0], out runningObjectVal);
-
-                Console.WriteLine(runningObjectName);
                 
                 if (runningObjectName.StartsWith("!VisualStudio.DTE"))
                 {
@@ -197,11 +195,6 @@ namespace AttachR.Engine
 
             instance = null;
             return false;
-        }
-
-        public static bool IsPropertyExist(dynamic obj, string name)
-        {
-            return obj.GetType().GetProperty(name) != null;
         }
 
         private static IEnumerable<EnvDTE80.Engine> GetEngines(Debugger2 debugger)
