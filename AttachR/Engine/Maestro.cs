@@ -35,8 +35,7 @@ namespace AttachR.Engine
                 {
                     return new RunResult
                     {
-                        Message =
-                            string.Format("No visual studio instance found with solution {0}", visualStudioSolutionPath)
+                        Message = string.Format("No visual studio instance found with solution {0}", visualStudioSolutionPath)
                     };
                 }
             }

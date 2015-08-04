@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -156,14 +157,13 @@ namespace AttachR.Engine
             Process[] processes = Process.GetProcesses();
             return processes.Where(o => o.ProcessName.Contains("devenv"));
         }
-
+        
         private static bool TryGetVsInstance(int processId, out _DTE instance)
         {
-            IntPtr numFetched = IntPtr.Zero;
+            var numFetched = IntPtr.Zero;
             IRunningObjectTable runningObjectTable;
             IEnumMoniker monikerEnumerator;
-            IMoniker[] monikers = new IMoniker[1];
-
+            var monikers = new IMoniker[1];
             GetRunningObjectTable(0, out runningObjectTable);
             runningObjectTable.EnumRunning(out monikerEnumerator);
             monikerEnumerator.Reset();
@@ -179,12 +179,15 @@ namespace AttachR.Engine
                 object runningObjectVal;
                 runningObjectTable.GetObject(monikers[0], out runningObjectVal);
 
-                var dte = runningObjectVal as _DTE;
-                if (dte != null && runningObjectName.StartsWith("!VisualStudio"))
+                Console.WriteLine(runningObjectName);
+                
+                if (runningObjectName.StartsWith("!VisualStudio.DTE"))
                 {
-                    int currentProcessId = int.Parse(runningObjectName.Split(':')[1]);
+                    var dte = runningObjectVal as _DTE;
 
-                    if (currentProcessId == processId)
+                    var split = runningObjectName.Split(':');
+                    int processIdFromDte;
+                    if (split.Length == 2 && int.TryParse(split[1], out processIdFromDte) && processIdFromDte == processId)
                     {
                         instance = dte;
                         return true;
@@ -194,6 +197,11 @@ namespace AttachR.Engine
 
             instance = null;
             return false;
+        }
+
+        public static bool IsPropertyExist(dynamic obj, string name)
+        {
+            return obj.GetType().GetProperty(name) != null;
         }
 
         private static IEnumerable<EnvDTE80.Engine> GetEngines(Debugger2 debugger)
