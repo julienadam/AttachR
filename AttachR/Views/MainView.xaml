@@ -15,7 +15,7 @@
                       cal:Message.Attach="[Event Closing] = [Action Closing()]"
                       Loaded="MainView_OnLoaded">
     <Window.Resources>
-        <attachR:IsNullOrEmptyConverter x:Key="isNullOrEmptyConverter" />
+        <attachR:IsNullOrEmptyConverter x:Key="IsNullOrEmptyConverter" />
     </Window.Resources>
 
     <Window.CommandBindings>
@@ -157,7 +157,7 @@
                                 <StackPanel Grid.Column="1" Grid.Row="0">
                                     <Border Margin="3" BorderBrush="White" Width="35" Padding="4"
                                             Background="GhostWhite" BorderThickness="1,1,1,1" CornerRadius="4,4,4,4"
-                                            Visibility="{Binding Icon, Converter={StaticResource isNullOrEmptyConverter}}">
+                                            Visibility="{Binding Icon, Converter={StaticResource IsNullOrEmptyConverter}}">
                                         <Image Source="{Binding Path=Icon, Mode=OneWay}" />
                                         <Border.Effect>
                                             <DropShadowEffect Color="Gray" Opacity="0.5" />
@@ -182,16 +182,16 @@
                                         <RowDefinition Height="15" />
                                     </Grid.RowDefinitions>
 
-                                    <TextBlock Grid.Column="0" Grid.Row="0">Executable : </TextBlock>
+                                    <TextBlock Grid.Column="0" Grid.Row="0">Executable :</TextBlock>
                                     <TextBlock Grid.Column="1" Grid.Row="0" Text="{Binding Executable}" ToolTip="{Binding Executable}" TextTrimming="CharacterEllipsis"/>
-                                
-                                    <TextBlock Grid.Column="0" Grid.Row="1">Working directory : </TextBlock>
+
+                                    <TextBlock Grid.Column="0" Grid.Row="1">Working directory :</TextBlock>
                                     <TextBlock Grid.Column="1" Grid.Row="1" Text="{Binding WorkingDirectory}" ToolTip="{Binding WorkingDirectory}" TextTrimming="CharacterEllipsis"/>
 
-                                    <TextBlock Grid.Column="0" Grid.Row="2">Arguments : </TextBlock>
+                                    <TextBlock Grid.Column="0" Grid.Row="2">Arguments :</TextBlock>
                                     <TextBlock Grid.Column="1" Grid.Row="2" Text="{Binding CommandLineArguments}" ToolTip="{Binding CommandLineArguments}" TextTrimming="CharacterEllipsis"/>
-                                    
-                                    <TextBlock Grid.Column="0" Grid.Row="3">Last error : </TextBlock>
+
+                                    <TextBlock Grid.Column="0" Grid.Row="3">Last error :</TextBlock>
                                     <TextBlock Grid.Column="1" Grid.Row="3" Text="{Binding LastError}" ToolTip="{Binding LastError}" TextTrimming="CharacterEllipsis"/>
                                 </Grid>
 
@@ -209,7 +209,7 @@
                                         Style="{DynamicResource MetroCircleButtonStyle}">
                                     <Image Source="/Views/Media/glyphicons_173_play.png" Width="16" />
                                 </Button>
-                                
+
                                 <Button Grid.Column="5" Grid.Row="0" Width="50" Height="50" Name="Stop"
                                         cal:Message.Attach="[Event Click] = [Action Stop($dataContext)]"
                                         ToolTip="Stop this application"
@@ -222,8 +222,8 @@
                                         ToolTip="Edit advanced settings"
                                         Style="{DynamicResource MetroCircleButtonStyle}">
                                     <Image Source="/Views/Media/glyphicons_030_pencil.png" Width="22" />
-                                </Button> 
-                                
+                                </Button>
+
                                 <Button Grid.Column="7" Grid.Row="0" Width="50" Height="50" Name="Remove"
                                         cal:Message.Attach="[Event Click] = [Action RemoveExecutable($dataContext)]"
                                         ToolTip="Remove this application configuration"

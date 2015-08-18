@@ -40,9 +40,9 @@ namespace AttachR.ViewModels
             [NotNull] IEventAggregator aggregator,
             [NotNull] IWindowManager windowManager)
         {
-            if (persister == null) throw new ArgumentNullException("persister");
-            if (aggregator == null) throw new ArgumentNullException("aggregator");
-            if (windowManager == null) throw new ArgumentNullException("windowManager");
+            if (persister == null) throw new ArgumentNullException(nameof(persister));
+            if (aggregator == null) throw new ArgumentNullException(nameof(aggregator));
+            if (windowManager == null) throw new ArgumentNullException(nameof(windowManager));
 
             this.persister = persister;
             this.windowManager = windowManager;
@@ -64,11 +64,12 @@ namespace AttachR.ViewModels
             get { return debuggingProfile; }
             set
             {
-                if (debuggingProfile != value)
+                if (debuggingProfile == value)
                 {
-                    debuggingProfile = value;
-                    NotifyOfPropertyChange(() => DebuggingProfile);
+                    return;
                 }
+                debuggingProfile = value;
+                NotifyOfPropertyChange(() => DebuggingProfile);
             }
         }
 
@@ -77,11 +78,12 @@ namespace AttachR.ViewModels
             get { return fileName; }
             set
             {
-                if (fileName != value)
+                if (fileName == value)
                 {
-                    fileName = value;
-                    NotifyOfPropertyChange(() => FileName);
+                    return;
                 }
+                fileName = value;
+                NotifyOfPropertyChange(() => FileName);
             } 
         }
 
@@ -90,11 +92,12 @@ namespace AttachR.ViewModels
             get { return isDirty; }
             set
             {
-                if (isDirty != value)
+                if (isDirty == value)
                 {
-                    isDirty = value;
-                    NotifyOfPropertyChange(() => IsDirty);
+                    return;
                 }
+                isDirty = value;
+                NotifyOfPropertyChange(() => IsDirty);
             }
         }
 
@@ -103,11 +106,12 @@ namespace AttachR.ViewModels
             get { return error; }
             set
             {
-                if (error != value)
+                if (error == value)
                 {
-                    error = value;
-                    NotifyOfPropertyChange(() => Error);
+                    return;
                 }
+                error = value;
+                NotifyOfPropertyChange(() => Error);
             }
         }
 
@@ -126,10 +130,7 @@ namespace AttachR.ViewModels
             }
         }
 
-        public IRecentFileListPersister Persister
-        {
-            get { return persister; }
-        }
+        public IRecentFileListPersister Persister => persister;
 
         private void Clear()
         {
@@ -201,7 +202,7 @@ namespace AttachR.ViewModels
             }
             catch (Exception ex)
             {
-                Error = string.Format("Could not save file to {0}. Error was : {1}", newFileName, ex.Message);
+                Error = $"Could not save file to {newFileName}. Error was : {ex.Message}";
             }
         }
 
@@ -214,7 +215,7 @@ namespace AttachR.ViewModels
 
             if (!File.Exists(filePath))
             {
-                Error = string.Format("Could not load data from {0}. File does not exist", filePath);
+                Error = $"Could not load data from {filePath}. File does not exist";
 
                 persister.RemoveFile(filePath);
                 return;
@@ -227,7 +228,7 @@ namespace AttachR.ViewModels
             }
             catch (Exception ex)
             {
-                Error = string.Format("Could not load data from {0}. It might be corrupted. Error was : {1}", filePath, ex.Message);
+                Error = $"Could not load data from {filePath}. It might be corrupted. Error was : {ex.Message}";
             }
         }
 
@@ -245,6 +246,10 @@ namespace AttachR.ViewModels
             FileOpenCore(recentItemClicked.Filepath);
         }
 
+        public void Preferences(object sender, RoutedEventArgs e)
+        {
+            windowManager.ShowDialog(new PreferencesViewModel());
+        }
 
         public void RunAll()
         {
@@ -265,7 +270,7 @@ namespace AttachR.ViewModels
             }
             catch (Exception ex)
             {
-                Error = string.Format("Could not run all executables : {0}", ex.Message);
+                Error = $"Could not run all executables : {ex.Message}";
             }
         }
 
@@ -279,7 +284,7 @@ namespace AttachR.ViewModels
             }
             catch (Exception ex)
             {
-                Error = string.Format("Could not stop all executables : {0}", ex.Message);
+                Error = $"Could not stop all executables : {ex.Message}";
             }
         }
 
@@ -358,12 +363,14 @@ namespace AttachR.ViewModels
         public void EditExecutable(DebuggingTargetViewModel target)
         {
             var clone = (DebuggingTargetViewModel) target.Clone();
-            if (windowManager.ShowDialog(clone) == true)
+            if (windowManager.ShowDialog(clone) != true)
             {
-                var index = DebuggingProfile.Targets.IndexOf(target);
-                DebuggingProfile.Targets.RemoveAt(index);
-                DebuggingProfile.Targets.Insert(index, clone);
+                return;
             }
+
+            var index = DebuggingProfile.Targets.IndexOf(target);
+            DebuggingProfile.Targets.RemoveAt(index);
+            DebuggingProfile.Targets.Insert(index, clone);
         }
 
     }

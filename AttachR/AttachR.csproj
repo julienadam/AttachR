@@ -133,6 +133,10 @@
     <Compile Include="Commands\DebugAllCommand.cs" />
     <Compile Include="Commands\RunAllCommand.cs" />
     <Compile Include="Commands\StopAllCommand.cs" />
+    <Compile Include="Components\Keyboard\KeyboardState.cs" />
+    <Compile Include="Components\Keyboard\KeyCombinationConverter.cs" />
+    <Compile Include="Components\Keyboard\KeyCombinationInput.cs" />
+    <Compile Include="Components\Keyboard\KeyCombinationValidator.cs" />
     <Compile Include="Components\MinimizeToTray.cs" />
     <Compile Include="Components\Recent\IRecentFileListPersister.cs" />
     <Compile Include="Components\Recent\RegistryPersister.cs" />
@@ -153,6 +157,10 @@
     <Compile Include="ViewModels\IconLoader.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="Components\Recent\RecentFileList.cs" />
+    <Compile Include="ViewModels\PreferencesViewModel.cs" />
+    <Compile Include="Views\PreferencesView.xaml.cs">
+      <DependentUpon>PreferencesView.xaml</DependentUpon>
+    </Compile>
     <Page Include="Views\DebuggingTargetView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -176,6 +184,10 @@
       <DependentUpon>MainView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="Views\PreferencesView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Models\DebuggingTarget.cs" />
