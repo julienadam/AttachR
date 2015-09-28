@@ -1,25 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Threading;
 using System.Windows;
 using System.Windows.Input;
-using System.Windows.Threading;
 using AttachR.Commands;
 using AttachR.Components;
 using AttachR.Components.Recent;
 using AttachR.ViewModels;
-using AttachR.Views;
 using Caliburn.Micro;
 using NHotkey;
 using NHotkey.Wpf;
-using Action = System.Action;
 
 namespace AttachR
 {
     public class Bootstrapper : BootstrapperBase
     {
         private readonly SimpleContainer container = new SimpleContainer();
-        
+
         public Bootstrapper()
         {
             Initialize();
@@ -61,20 +57,32 @@ namespace AttachR
                 var aggregator = container.GetInstance<IEventAggregator>();
                 aggregator.PublishOnUIThread(new RunAllCommand());
             };
-            
+
             EventHandler<HotkeyEventArgs> stopAllHandler = (o, args) =>
             {
                 var aggregator = container.GetInstance<IEventAggregator>();
                 aggregator.PublishOnUIThread(new StopAllCommand());
             };
-            
-            HotkeyManager.Current.AddOrReplace("RunAll1", Key.MediaPlayPause, ModifierKeys.Alt | ModifierKeys.Control, runAllHandler);
-            HotkeyManager.Current.AddOrReplace("RunAll2", Key.F5, ModifierKeys.Windows, runAllHandler);
 
-            HotkeyManager.Current.AddOrReplace("StopAll1", Key.MediaStop, ModifierKeys.Alt | ModifierKeys.Control, stopAllHandler);
-            HotkeyManager.Current.AddOrReplace("StopAll2", Key.F5, ModifierKeys.Windows | ModifierKeys.Shift, stopAllHandler);
+            TryRegisterHotkey("RunAll1", Key.MediaPlayPause, ModifierKeys.Alt | ModifierKeys.Control, runAllHandler);
+            TryRegisterHotkey("RunAll2", Key.F5, ModifierKeys.Windows, runAllHandler);
+
+            TryRegisterHotkey("StopAll1", Key.MediaStop, ModifierKeys.Alt | ModifierKeys.Control, stopAllHandler);
+            TryRegisterHotkey("StopAll2", Key.F5, ModifierKeys.Windows | ModifierKeys.Shift, stopAllHandler);
 
             MinimizeToTray.Enable(Application.MainWindow);
+        }
+
+        private static void TryRegisterHotkey(string name, Key key, ModifierKeys modifiers, EventHandler<HotkeyEventArgs> handler)
+        {
+            try
+            {
+                HotkeyManager.Current.AddOrReplace(name, key, modifiers, handler);
+            }
+            catch (HotkeyAlreadyRegisteredException)
+            {
+                // Do not register the hotkey.
+            }
         }
     }
 }
