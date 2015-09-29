@@ -1,14 +1,15 @@
 ﻿using System.IO;
 using System.Linq;
 using AttachR.Models;
+using AttachR.ViewModels;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
-namespace AttachR.ViewModels
+namespace AttachR.Serializers
 {
-    public class FileManager
+    public class DebuggingTargetFileSerializer
     {
-        static FileManager()
+        static DebuggingTargetFileSerializer()
         {
             AutoMapper.Mapper.CreateMap<DebuggingProfileViewModel, DebuggingProfile>();
             AutoMapper.Mapper.CreateMap<DebuggingProfile, DebuggingProfileViewModel>();

@@ -1,17 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Linq;
 using System.Windows.Input;
 
 namespace AttachR.Components.Keyboard
 {
-    public class KeyCombinationConverter
+    public static class KeyCombinationConverter
     {
-        public static string CombinationToString(IEnumerable<Key> keys)
+        public static string CombinationToString(KeyCombination combination)
         {
-            return string.Join(" + ", keys.Select(TranslateKey));
+            if (combination.Keys == null || combination.Keys.Length == 0)
+            {
+                return "";
+            }
+            else
+            {
+                return string.Join(" + ", combination.Keys.Select(TranslateKey));
+            }
         }
 
         private static string TranslateKey(Key input)
@@ -20,18 +23,48 @@ namespace AttachR.Components.Keyboard
             {
                 case Key.LWin:
                 case Key.RWin:
-                    return "Windows";
+                    return "WIN";
                 case Key.LeftCtrl:
                 case Key.RightCtrl:
-                    return "Control";
+                    return "CTRL";
                 case Key.LeftAlt:
                 case Key.RightAlt:
-                    return "Alt";
+                    return "ALT";
                 case Key.LeftShift:
                 case Key.RightShift:
-                    return "Shift";
+                    return "SHIFT";
                 default:
                     return input.ToString();
+            }
+        }
+
+        public static KeyCombination ParseShortcut(string input)
+        {
+            if (string.IsNullOrWhiteSpace(input))
+            {
+                return new KeyCombination();
+            }
+
+            return new KeyCombination(
+                input
+                    .Split('+')
+                    .Select(x => ParseSingleKey(x.Trim()))
+                    .Where(x => x.HasValue)
+                    .Select(x => x.Value)
+                    .ToArray());
+        }
+
+
+        private static Key? ParseSingleKey(string key)
+        {
+            var converter = new KeyConverter();
+            try
+            {
+                return (Key?)converter.ConvertFrom(key);
+            }
+            catch
+            {
+                return null;
             }
         }
     }

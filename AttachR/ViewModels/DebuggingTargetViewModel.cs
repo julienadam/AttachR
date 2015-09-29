@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows.Media;
+using AttachR.Serializers;
 using Caliburn.Micro;
 using Newtonsoft.Json;
 
@@ -25,7 +26,7 @@ namespace AttachR.ViewModels
 
         public void BindDebuggingEntries()
         {
-            debuggingEngines = new BindingList<DebuggingEngineViewModel>(
+            DebuggingEngines = new BindingList<DebuggingEngineViewModel>(
                 ViewModels.DebuggingEngines.AvailableModes
                     .Select(x => new DebuggingEngineViewModel
                     {
@@ -37,7 +38,7 @@ namespace AttachR.ViewModels
 
         private DebuggingTargetViewModel(BindingList<DebuggingEngineViewModel> engines)
         {
-            debuggingEngines = engines;
+            DebuggingEngines = engines;
         }
 
         [JsonIgnore]
@@ -109,11 +110,12 @@ namespace AttachR.ViewModels
             get { return lastError; }
             set
             {
-                if (lastError != value)
+                if (lastError == value)
                 {
-                    lastError = value;
-                    NotifyOfPropertyChange();
+                    return;
                 }
+                lastError = value;
+                NotifyOfPropertyChange();
             }
         }
 
@@ -125,27 +127,21 @@ namespace AttachR.ViewModels
             get { return currentProcess; }
             set
             {
-                if (currentProcess != value)
+                if (currentProcess == value)
                 {
-                    currentProcess = value;
-                    NotifyOfPropertyChange("CurrentProcessId");
-                    NotifyOfPropertyChange();
+                    return;
                 }
+                currentProcess = value;
+                NotifyOfPropertyChange(nameof(CurrentProcessId));
+                NotifyOfPropertyChange();
             }
         }
 
         [JsonIgnore]
-        public string CurrentProcessId
-        {
-            get { return CurrentProcess != null ? CurrentProcess.Id.ToString() : "None"; }
-        }
-        
-        private BindingList<DebuggingEngineViewModel> debuggingEngines;
+        public string CurrentProcessId => CurrentProcess?.Id.ToString() ?? "None";
+        private readonly BindingList<DebuggingEngineViewModel> debuggingEngines;
 
-        public BindingList<DebuggingEngineViewModel> DebuggingEngines
-        {
-            get { return debuggingEngines; }
-        }
+        public BindingList<DebuggingEngineViewModel> DebuggingEngines { get; }
 
         public void Closing()
         {

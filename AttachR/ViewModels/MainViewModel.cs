@@ -7,6 +7,7 @@ using System.Windows;
 using AttachR.Commands;
 using AttachR.Components.Recent;
 using AttachR.Engine;
+using AttachR.Serializers;
 using Caliburn.Micro;
 using JetBrains.Annotations;
 using Microsoft.Win32;
@@ -29,6 +30,7 @@ namespace AttachR.ViewModels
             return debuggingTargetViewModel.DebuggingEngines.Where(d => d.Selected);
         }
 
+        private readonly DebuggingTargetFileSerializer debuggingTargetFileSerializer = new DebuggingTargetFileSerializer();
         private readonly FileManager fileManager = new FileManager();
         private readonly object debuggingProfileLock = new object();
 
@@ -196,7 +198,7 @@ namespace AttachR.ViewModels
         {
             try
             {
-                fileManager.Save(newFileName, DebuggingProfile);
+                debuggingTargetFileSerializer.Save(newFileName, DebuggingProfile);
                 FileName = newFileName;
                 persister.InsertFile(newFileName);
             }
@@ -223,7 +225,7 @@ namespace AttachR.ViewModels
 
             try
             {
-                Load(fileManager.Open(filePath), filePath);
+                Load(debuggingTargetFileSerializer.Open(filePath), filePath);
                 persister.InsertFile(filePath);
             }
             catch (Exception ex)
@@ -265,7 +267,7 @@ namespace AttachR.ViewModels
         {
             try
             {
-                RunResult result = maestro.Run(DebuggingProfile.VisualStudioSolutionPath, DebuggingProfile.Targets, debug, false);
+                var result = maestro.Run(DebuggingProfile.VisualStudioSolutionPath, DebuggingProfile.Targets, debug, false);
                 Error = result.Message;
             }
             catch (Exception ex)
@@ -273,7 +275,6 @@ namespace AttachR.ViewModels
                 Error = $"Could not run all executables : {ex.Message}";
             }
         }
-
 
         public void StopAll()
         {

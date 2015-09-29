@@ -134,6 +134,7 @@
     <Compile Include="Commands\RunAllCommand.cs" />
     <Compile Include="Commands\StopAllCommand.cs" />
     <Compile Include="Components\Keyboard\KeyboardState.cs" />
+    <Compile Include="Components\Keyboard\KeyCombination.cs" />
     <Compile Include="Components\Keyboard\KeyCombinationConverter.cs" />
     <Compile Include="Components\Keyboard\KeyCombinationInput.cs" />
     <Compile Include="Components\Keyboard\KeyCombinationValidator.cs" />
@@ -146,6 +147,8 @@
     <Compile Include="IsNullConverter.cs" />
     <Compile Include="Commands\LocalCommands.cs" />
     <Compile Include="Commands\PreferencesCommand.cs" />
+    <Compile Include="Models\Preferences.cs" />
+    <Compile Include="Serializers\PreferencesSerializer.cs" />
     <Compile Include="ViewModels\DebuggingEngines.cs" />
     <Compile Include="ViewModels\DebuggingEngineViewModel.cs" />
     <Compile Include="ViewModels\DebuggingEnginViewModel.cs" />
@@ -153,11 +156,13 @@
     <Compile Include="ViewModels\DebuggingTargetViewModel.cs" />
     <Compile Include="ViewModels\DebuggingTargetViewModelWithSampleData.cs" />
     <Compile Include="ViewModels\DialogHelper.cs" />
-    <Compile Include="ViewModels\FileManager.cs" />
-    <Compile Include="ViewModels\IconLoader.cs" />
+    <Compile Include="Serializers\DebuggingTargetFileSerializer.cs" />
+    <Compile Include="Serializers\IconLoader.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="Components\Recent\RecentFileList.cs" />
     <Compile Include="ViewModels\PreferencesViewModel.cs" />
+    <Compile Include="ViewModels\PreferencesViewModelWithSampleData.cs" />
+    <Compile Include="Views\DebugConverter.cs" />
     <Compile Include="Views\PreferencesView.xaml.cs">
       <DependentUpon>PreferencesView.xaml</DependentUpon>
     </Compile>

@@ -1,4 +1,3 @@
-using System;
 using System.Windows.Forms;
 using OpenFileDialog = Microsoft.Win32.OpenFileDialog;
 
@@ -10,7 +9,7 @@ namespace AttachR.ViewModels
         {
             var dialog = new OpenFileDialog
             {
-                Filter = String.Format("{0}|*{1}|All files|*.*", fileTypeDescription, fileTypeExtension),
+                Filter = $"{fileTypeDescription}|*{fileTypeExtension}|All files|*.*",
                 FilterIndex = 0,
                 CheckFileExists = true,
                 CheckPathExists = true,
@@ -23,7 +22,7 @@ namespace AttachR.ViewModels
 
         public static string ShowFolderDialog(string title, string currentValue)
         {
-            var dialog = new System.Windows.Forms.FolderBrowserDialog
+            var dialog = new FolderBrowserDialog
             {
                 Description = title,
                 SelectedPath = currentValue,

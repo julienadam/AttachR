@@ -5,15 +5,25 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
         xmlns:keyboard="clr-namespace:AttachR.Components.Keyboard"
+        xmlns:viewModels="clr-namespace:AttachR.ViewModels"
+        xmlns:diag="clr-namespace:System.Diagnostics;assembly=WindowsBase"
+        xmlns:views="clr-namespace:AttachR.Views"
         mc:Ignorable="d"
+        d:DataContext="{d:DesignInstance Type=viewModels:PreferencesViewModelWithSampleData, IsDesignTimeCreatable=True}"
         Title="Preferences" Height="362" Width="843">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="20"/>
+            <RowDefinition Height="40"/>
         </Grid.RowDefinitions>
+        
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="100"/>
+            <ColumnDefinition Width="100"/>
+        </Grid.ColumnDefinitions>
 
-        <GroupBox Header="Shortcuts" Grid.Column="0" Grid.Row="0">
+        <GroupBox Header="Shortcuts" Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="3">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
@@ -26,13 +36,18 @@
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
 
+                <Grid.Resources>
+                    <views:DebugDataBindingConverter x:Key="DebugBinding"/>
+                </Grid.Resources>
+
                 <Label Grid.Column="0" Grid.Row="0">Start all selected without debugging</Label>
-                <keyboard:KeyCombinationInput Grid.Column="1" Grid.Row="0" Margin="3" x:Name="keyStartAll" />
-                <Label Grid.Column="0" Grid.Row="1">Debug all selected</Label>
-                <keyboard:KeyCombinationInput Grid.Column="1" Grid.Row="1" Margin="3" x:Name="keyDebugAll" />
+                <keyboard:KeyCombinationInput Grid.Column="1" Grid.Row="0" Margin="3" x:Name="keyStartAll" KeyCombination="{Binding Path=DebugAllShortcut, Mode=TwoWay, Converter={StaticResource DebugBinding}}" />
+                
+                <!--<Label Grid.Column="0" Grid.Row="1">Debug all selected</Label>
+                <keyboard:KeyCombinationInput Grid.Column="1" Grid.Row="1" Margin="3" x:Name="keyDebugAll" KeyCombination="{Binding Path=StartAllShortcut, Mode=TwoWay}" />-->
             </Grid>
         </GroupBox>
-
-
+        <Button Grid.Column="1" Grid.Row="1" Margin="3" Name="Ok">OK</Button>
+        <Button Grid.Column="2" Grid.Row="1" Margin="3" Name="Cancel">Cancel</Button>
     </Grid>
 </controls:MetroWindow>
