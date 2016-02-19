@@ -20,6 +20,11 @@ namespace AttachR.ViewModels
 
         public DebuggingTargetViewModel()
         {
+            BindDebuggingEntries();
+        }
+
+        public void BindDebuggingEntries()
+        {
             debuggingEngines = new BindingList<DebuggingEngineViewModel>(
                 ViewModels.DebuggingEngines.AvailableModes
                     .Select(x => new DebuggingEngineViewModel
@@ -135,7 +140,7 @@ namespace AttachR.ViewModels
             get { return CurrentProcess != null ? CurrentProcess.Id.ToString() : "None"; }
         }
         
-        private readonly BindingList<DebuggingEngineViewModel> debuggingEngines;
+        private BindingList<DebuggingEngineViewModel> debuggingEngines;
 
         public BindingList<DebuggingEngineViewModel> DebuggingEngines
         {
