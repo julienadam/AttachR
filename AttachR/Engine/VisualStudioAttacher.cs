@@ -50,6 +50,8 @@ namespace AttachR.Engine
             return null;
         }
 
+        public static Func<IEnumerable<EnvDTE80.Engine>, IEnumerable<EnvDTE80.Engine>>   RequestDebuggerSelectionCallback;
+
         public static Process GetAttachedVisualStudio(Process applicationProcess)
         {
             IEnumerable<Process> visualStudios = GetVisualStudioProcesses();
@@ -76,6 +78,21 @@ namespace AttachR.Engine
 
         private static Dictionary<string, EnvDTE80.Engine> availableEngines;
 
+        private static EnvDTE80.Engine[] GetSelectedEngines(string[] selected)
+        {
+            try
+            {
+                return selected.Select(e => availableEngines[e]).ToArray();
+            }
+            catch (KeyNotFoundException)
+            {
+                if (RequestDebuggerSelectionCallback == null)
+                {
+                    throw;
+                }
+                return RequestDebuggerSelectionCallback(availableEngines.Values).ToArray();
+            }
+        }
         public static void AttachVisualStudioToProcess(Process visualStudioProcess, Process applicationProcess, params string[] engines)
         {
             _DTE visualStudioInstance;
@@ -92,7 +109,7 @@ namespace AttachR.Engine
             //Attach to the process.
             if (processToAttachTo != null)
             {
-                var selectedEngines = engines.Select(e => availableEngines[e]).ToArray();
+                var selectedEngines = GetSelectedEngines(engines);
 
                 if (selectedEngines.Length > 0)
                 {
@@ -197,7 +214,7 @@ namespace AttachR.Engine
             return false;
         }
 
-        private static IEnumerable<EnvDTE80.Engine> GetEngines(Debugger2 debugger)
+        public static IEnumerable<EnvDTE80.Engine> GetEngines(Debugger2 debugger)
         {
             var engines = debugger.Transports.Item("Default").Engines;
             foreach (var x in engines)

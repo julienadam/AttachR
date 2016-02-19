@@ -9,6 +9,13 @@ namespace AttachR.Engine
 {
     public class Maestro
     {
+        public Func<DebuggingTargetViewModel, IEnumerable<DebuggingEngine>, IEnumerable<DebuggingEngine>> EngineSelectionRequired;
+
+        public Maestro(Func<DebuggingTargetViewModel, IEnumerable<DebuggingEngine>, IEnumerable<DebuggingEngine>> engineSelectionRequired)
+        {
+            EngineSelectionRequired = engineSelectionRequired;
+        }
+
         public RunResult Run(string visualStudioSolutionPath, IEnumerable<DebuggingTargetViewModel> debuggingTargets, bool debug, bool runUnselected)
         {
             var targets = debuggingTargets.ToList();
@@ -58,6 +65,7 @@ namespace AttachR.Engine
                         var engineModes = localTarget.DebuggingEngines.Where(x => x.Selected).Select(x => x.Name).ToArray();
                         if (engineModes.Any())
                         {
+                            VisualStudioAttacher.RequestDebuggerSelectionCallback = engines => SelectRequiredEngines(engines.ToList(), localTarget);
                             Retrier.RunWithRetryOnException(() => VisualStudioAttacher.AttachVisualStudioToProcess(visualStudioProcess, process, engineModes));
                         }
                         localTarget.LastError = null;
@@ -78,6 +86,12 @@ namespace AttachR.Engine
                 target.CurrentProcess = process;
             }
             return new RunResult();
+        }
+
+        private IEnumerable<EnvDTE80.Engine> SelectRequiredEngines(List<EnvDTE80.Engine> available, DebuggingTargetViewModel localTarget)
+        {
+            var selected = EngineSelectionRequired(localTarget, available.Select(d=> new DebuggingEngine(Guid.Parse(d.ID), d.Name))).Select(e=>e.Id.ToString());
+            return available.Where(e=>selected.Contains(e.ID));
         }
 
         public RunResult Stop(DebuggingProfileViewModel profile)

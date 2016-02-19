@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Windows;
 using AttachR.Commands;
 using AttachR.Components.Recent;
 using AttachR.Engine;
-using AttachR.Models;
 using Caliburn.Micro;
 using JetBrains.Annotations;
 using Microsoft.Win32;
@@ -18,7 +18,17 @@ namespace AttachR.ViewModels
         private readonly IRecentFileListPersister persister;
         private readonly IWindowManager windowManager;
         private const string FILE_DIALOG_FILTERS = "Debug profiles|*.dpf|All Files|*.*";
-        private readonly Maestro maestro = new Maestro();
+        private readonly Maestro maestro;
+
+        private IEnumerable<DebuggingEngine> EngineSelectionRequired(DebuggingTargetViewModel debuggingTargetViewModel, IEnumerable<DebuggingEngine> available)
+        {
+            var list = available.ToList();
+            DebuggingEngines.Save(list);
+            debuggingTargetViewModel.BindDebuggingEntries();
+            EditExecutable(debuggingTargetViewModel);
+            return debuggingTargetViewModel.DebuggingEngines.Where(d => d.Selected);
+        }
+
         private readonly FileManager fileManager = new FileManager();
         private readonly object debuggingProfileLock = new object();
 
@@ -40,6 +50,7 @@ namespace AttachR.ViewModels
             aggregator.Subscribe(this);
 
             DebuggingProfile = new DebuggingProfileViewModel();
+            maestro = new Maestro(EngineSelectionRequired);
             timer = new Timer(state => CheckExitedProcesses(), null, TimeSpan.Zero, TimeSpan.FromSeconds(5));
         }
 
