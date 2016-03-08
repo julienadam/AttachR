@@ -27,24 +27,28 @@
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="140"/>
+                    <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
 
                 <Grid.RowDefinitions>
                     <RowDefinition Height="30"/>
                     <RowDefinition Height="30"/>
+                    <RowDefinition Height="30"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
 
-                <Grid.Resources>
+                <!--<Grid.Resources>
                     <views:DebugDataBindingConverter x:Key="DebugBinding"/>
-                </Grid.Resources>
+                </Grid.Resources>-->
 
                 <Label Grid.Column="0" Grid.Row="0">Start all selected without debugging</Label>
-                <keyboard:KeyCombinationInput Grid.Column="1" Grid.Row="0" Margin="3" x:Name="keyStartAll" KeyCombination="{Binding Path=DebugAllShortcut, Mode=TwoWay, Converter={StaticResource DebugBinding}}" />
+                <keyboard:KeyCombinationInput Grid.Column="1" Grid.Row="0" Margin="3" x:Name="KeyStartAll" KeyCombination="{Binding Path=StartAllShortcut, Mode=TwoWay}" ToolTip="Click on the box then press the shortcut you want to register" />
                 
-                <!--<Label Grid.Column="0" Grid.Row="1">Debug all selected</Label>
-                <keyboard:KeyCombinationInput Grid.Column="1" Grid.Row="1" Margin="3" x:Name="keyDebugAll" KeyCombination="{Binding Path=StartAllShortcut, Mode=TwoWay}" />-->
+                <Label Grid.Column="0" Grid.Row="1">Debug all selected</Label>
+                <keyboard:KeyCombinationInput Grid.Column="1" Grid.Row="1" Margin="3" x:Name="KeyDebugAll" KeyCombination="{Binding Path=DebugAllShortcut, Mode=TwoWay}" ToolTip="Click on the box then press the shortcut you want to register"/>
+                
+                <Label Grid.Column="0" Grid.Row="2">Stop all</Label>
+                <keyboard:KeyCombinationInput Grid.Column="1" Grid.Row="2" Margin="3" x:Name="KeyStopAll" KeyCombination="{Binding Path=StopAllShortcut, Mode=TwoWay}" ToolTip="Click on the box then press the shortcut you want to register"/>
             </Grid>
         </GroupBox>
         <Button Grid.Column="1" Grid.Row="1" Margin="3" Name="Ok">OK</Button>

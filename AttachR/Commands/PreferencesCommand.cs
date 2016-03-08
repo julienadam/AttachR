@@ -11,8 +11,6 @@ namespace AttachR.Commands
 
         public void Execute(object parameter)
         {
-            //PreferencesWindow window = new PreferencesWindow();
-            //window.ShowDialog();
         }
     }
 }

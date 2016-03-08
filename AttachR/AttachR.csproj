@@ -131,6 +131,7 @@
     </ApplicationDefinition>
     <Compile Include="Bootstrapper.cs" />
     <Compile Include="Commands\DebugAllCommand.cs" />
+    <Compile Include="Commands\ReloadPreferencesCommand.cs" />
     <Compile Include="Commands\RunAllCommand.cs" />
     <Compile Include="Commands\StopAllCommand.cs" />
     <Compile Include="Components\Keyboard\KeyboardState.cs" />
@@ -148,6 +149,7 @@
     <Compile Include="Commands\LocalCommands.cs" />
     <Compile Include="Commands\PreferencesCommand.cs" />
     <Compile Include="Models\Preferences.cs" />
+    <Compile Include="Serializers\IPreferencesSerializer.cs" />
     <Compile Include="Serializers\PreferencesSerializer.cs" />
     <Compile Include="ViewModels\DebuggingEngines.cs" />
     <Compile Include="ViewModels\DebuggingEngineViewModel.cs" />

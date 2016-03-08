@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using AttachR.Commands;
 using AttachR.Components;
+using AttachR.Components.Keyboard;
 using AttachR.Components.Recent;
+using AttachR.Serializers;
 using AttachR.ViewModels;
 using Caliburn.Micro;
 using NHotkey;
@@ -15,6 +18,7 @@ namespace AttachR
     public class Bootstrapper : BootstrapperBase
     {
         private readonly SimpleContainer container = new SimpleContainer();
+        private IEventAggregator aggregator;
 
         public Bootstrapper()
         {
@@ -38,9 +42,11 @@ namespace AttachR
 
         protected override void Configure()
         {
-            container.Singleton<IEventAggregator, EventAggregator>();
+            aggregator = new EventAggregator();
+            container.Instance(aggregator);
             container.Instance<IRecentFileListPersister>(new RegistryPersister());
             container.Instance<IWindowManager>(new WindowManager());
+            container.Instance<IPreferencesSerializer>(new PreferencesSerializer());
             container.Singleton<MainViewModel>();
         }
 
@@ -51,26 +57,30 @@ namespace AttachR
                 return;
             }
 
-            DisplayRootViewFor<MainViewModel>();
-            EventHandler<HotkeyEventArgs> runAllHandler = (o, args) =>
-            {
-                var aggregator = container.GetInstance<IEventAggregator>();
-                aggregator.PublishOnUIThread(new RunAllCommand());
-            };
-
-            EventHandler<HotkeyEventArgs> stopAllHandler = (o, args) =>
-            {
-                var aggregator = container.GetInstance<IEventAggregator>();
-                aggregator.PublishOnUIThread(new StopAllCommand());
-            };
-
-            TryRegisterHotkey("RunAll1", Key.MediaPlayPause, ModifierKeys.Alt | ModifierKeys.Control, runAllHandler);
-            TryRegisterHotkey("RunAll2", Key.F5, ModifierKeys.Windows, runAllHandler);
-
-            TryRegisterHotkey("StopAll1", Key.MediaStop, ModifierKeys.Alt | ModifierKeys.Control, stopAllHandler);
-            TryRegisterHotkey("StopAll2", Key.F5, ModifierKeys.Windows | ModifierKeys.Shift, stopAllHandler);
+            ApplyPreferences();
 
             MinimizeToTray.Enable(Application.MainWindow);
+        }
+
+        private void ApplyPreferences()
+        {
+            var s = new PreferencesSerializer();
+            var preferences = s.Load();
+
+            DisplayRootViewFor<MainViewModel>();
+
+            RegisterKeyCombination((_, __) => aggregator.PublishOnUIThread(new RunAllCommand()), preferences.StartAllShortcut, "RunAll");
+            RegisterKeyCombination((_, __) => aggregator.PublishOnUIThread(new DebugAllCommand()), preferences.DebugAllShortcut, "DebugAll");
+            RegisterKeyCombination((_, __) => aggregator.PublishOnUIThread(new StopAllCommand()), preferences.StopAllShortcut, "StopAll");
+        }
+
+        private static void RegisterKeyCombination(EventHandler<HotkeyEventArgs> handler, string shortcut, string name)
+        {
+            var startCombination = KeyCombinationConverter.ParseShortcut(shortcut);
+            Key key;
+            ModifierKeys modifiers;
+            startCombination.CombinationToShortcut(out key, out modifiers);
+            TryRegisterHotkey(name, key, modifiers, handler);
         }
 
         private static void TryRegisterHotkey(string name, Key key, ModifierKeys modifiers, EventHandler<HotkeyEventArgs> handler)

@@ -19,7 +19,7 @@ namespace AttachR.Components.Keyboard
             set
             {
                 SetValue(KeyCombinationProperty, value);
-                // Text = KeyCombinationConverter.CombinationToString(value);
+                Text = KeyCombinationConverter.CombinationToString(value);
             }
         }
 

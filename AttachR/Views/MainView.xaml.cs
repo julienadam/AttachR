@@ -26,7 +26,7 @@ namespace AttachR.Views
 
         private void CommandBinding_DebugAll_OnExecuted(object sender, ExecutedRoutedEventArgs e)
         {
-            ((MainViewModel)DataContext).DebugAll();
+            ((MainViewModel) DataContext).DebugAll();
         }
 
         private void CommandBinding_RunAll_OnExecuted(object sender, ExecutedRoutedEventArgs e)
@@ -36,7 +36,7 @@ namespace AttachR.Views
 
         private void CommandBinding_StopAll_OnExecuted(object sender, ExecutedRoutedEventArgs e)
         {
-            ((MainViewModel)DataContext).StopAll();
+            ((MainViewModel) DataContext).StopAll();
         }
     }
 }

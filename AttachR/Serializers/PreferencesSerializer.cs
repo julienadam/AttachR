@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 
 namespace AttachR.Serializers
 {
-    public class PreferencesSerializer
+    public class PreferencesSerializer : IPreferencesSerializer
     {
         private readonly string path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "AttachR", "preferences.json");
 

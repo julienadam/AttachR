@@ -1,21 +1,36 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using AttachR.Commands;
 using AttachR.Components.Keyboard;
 using AttachR.Models;
 using AttachR.Serializers;
 using Caliburn.Micro;
+using JetBrains.Annotations;
 
 namespace AttachR.ViewModels
 {
     public class PreferencesViewModel : Screen
     {
-        private readonly PreferencesSerializer preferencesSerializer = new PreferencesSerializer();
+        private readonly IEventAggregator aggregator;
+        private readonly IPreferencesSerializer preferencesSerializer;
 
-        public PreferencesViewModel()
+        public PreferencesViewModel([NotNull] IEventAggregator aggregator, [NotNull] IPreferencesSerializer preferencesSerializer)
         {
+            if (aggregator == null) throw new ArgumentNullException(nameof(aggregator));
+            if (preferencesSerializer == null) throw new ArgumentNullException(nameof(preferencesSerializer));
+            
+            this.aggregator = aggregator;
+            this.preferencesSerializer = preferencesSerializer;
+        }
+
+        protected override void OnViewAttached(object view, object context)
+        {
+            base.OnViewAttached(view, context);
             var preferences = preferencesSerializer.Load();
             DebugAllShortcut = KeyCombinationConverter.ParseShortcut(preferences.DebugAllShortcut);
             StartAllShortcut = KeyCombinationConverter.ParseShortcut(preferences.StartAllShortcut);
+            StopAllShortcut = KeyCombinationConverter.ParseShortcut(preferences.StopAllShortcut);
         }
         
         private KeyCombination debugAllShortcut;
@@ -44,6 +59,19 @@ namespace AttachR.ViewModels
             }
         }
 
+        private KeyCombination stopAllShortcut;
+        
+        public KeyCombination StopAllShortcut
+        {
+            get { return stopAllShortcut; }
+            set
+            {
+                if (Equals(value, stopAllShortcut)) return;
+                stopAllShortcut = value;
+                OnPropertyChanged();
+            }
+        }
+
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             OnPropertyChanged(new PropertyChangedEventArgs(propertyName));
@@ -54,9 +82,12 @@ namespace AttachR.ViewModels
             preferencesSerializer.Save(new Preferences
             {
                 DebugAllShortcut = DebugAllShortcut.ToString(),
-                StartAllShortcut = StartAllShortcut.ToString()
+                StartAllShortcut = StartAllShortcut.ToString(),
+                StopAllShortcut = StopAllShortcut.ToString()
             });
             TryClose();
+
+            aggregator.PublishOnUIThread(new ReloadPreferencesCommand());
         }
 
         public void Cancel()

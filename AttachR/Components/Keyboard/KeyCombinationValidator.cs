@@ -7,25 +7,9 @@ namespace AttachR.Components.Keyboard
     {
         public static bool IsValidCombination(params Key[] keys)
         {
-            return keys.Any(k => IsModifier(k)) && keys.Count(k => !IsModifier(k)) == 1;
+            return keys.Any(k => KeyCombination.IsModifier(k)) && keys.Count(k => !KeyCombination.IsModifier(k)) == 1;
         }
 
-        public static bool IsModifier(Key key)
-        {
-            switch (key)
-            {
-                case Key.LeftCtrl:
-                case Key.RightCtrl:
-                case Key.LeftShift:
-                case Key.RightShift:
-                case Key.LeftAlt:
-                case Key.RightAlt:
-                case Key.LWin:
-                case Key.RWin:
-                    return true;
-                default:
-                    return false;
-            }
-        }
+       
     }
 }

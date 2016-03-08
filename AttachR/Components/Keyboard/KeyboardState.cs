@@ -29,6 +29,7 @@ namespace AttachR.Components.Keyboard
             return distinctVirtualKeys
                 .Where(virtualKey => (keyboardState[virtualKey] & 0x80) != 0)
                 .Select(virtualKey => KeyInterop.KeyFromVirtualKey(virtualKey))
+                .Where(vk => vk != Key.Clear)
                 .ToArray();
         }
 

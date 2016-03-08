@@ -18,6 +18,7 @@ namespace AttachR.ViewModels
     {
         private readonly IRecentFileListPersister persister;
         private readonly IWindowManager windowManager;
+        private readonly IPreferencesSerializer preferencesSerializer;
         private const string FILE_DIALOG_FILTERS = "Debug profiles|*.dpf|All Files|*.*";
         private readonly Maestro maestro;
 
@@ -34,20 +35,30 @@ namespace AttachR.ViewModels
         private readonly FileManager fileManager = new FileManager();
         private readonly object debuggingProfileLock = new object();
 
+        private string error;
+        private DebuggingProfileViewModel debuggingProfile;
+        private string fileName;
+        private bool isDirty;
+        private readonly IEventAggregator aggregator;
+
         // ReSharper disable once NotAccessedField.Local
         private Timer timer;
 
         public MainViewModel(
             [NotNull] IRecentFileListPersister persister, 
             [NotNull] IEventAggregator aggregator,
-            [NotNull] IWindowManager windowManager)
+            [NotNull] IWindowManager windowManager, 
+            [NotNull] IPreferencesSerializer preferencesSerializer)
         {
             if (persister == null) throw new ArgumentNullException(nameof(persister));
             if (aggregator == null) throw new ArgumentNullException(nameof(aggregator));
             if (windowManager == null) throw new ArgumentNullException(nameof(windowManager));
+            if (preferencesSerializer == null) throw new ArgumentNullException(nameof(preferencesSerializer));
 
+            this.aggregator = aggregator;
             this.persister = persister;
             this.windowManager = windowManager;
+            this.preferencesSerializer = preferencesSerializer;
 
             aggregator.Subscribe(this);
 
@@ -55,11 +66,6 @@ namespace AttachR.ViewModels
             maestro = new Maestro(EngineSelectionRequired);
             timer = new Timer(state => CheckExitedProcesses(), null, TimeSpan.Zero, TimeSpan.FromSeconds(5));
         }
-
-        private string error;
-        private DebuggingProfileViewModel debuggingProfile;
-        private string fileName;
-        private bool isDirty;
 
         public DebuggingProfileViewModel DebuggingProfile
         {
@@ -250,7 +256,7 @@ namespace AttachR.ViewModels
 
         public void Preferences(object sender, RoutedEventArgs e)
         {
-            windowManager.ShowDialog(new PreferencesViewModel());
+            windowManager.ShowDialog(new PreferencesViewModel(aggregator, preferencesSerializer));
         }
 
         public void RunAll()
