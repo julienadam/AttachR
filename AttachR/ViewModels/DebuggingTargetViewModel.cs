@@ -139,9 +139,8 @@ namespace AttachR.ViewModels
 
         [JsonIgnore]
         public string CurrentProcessId => CurrentProcess?.Id.ToString() ?? "None";
-        private readonly BindingList<DebuggingEngineViewModel> debuggingEngines;
 
-        public BindingList<DebuggingEngineViewModel> DebuggingEngines { get; }
+        public BindingList<DebuggingEngineViewModel> DebuggingEngines { get; set; }
 
         public void Closing()
         {

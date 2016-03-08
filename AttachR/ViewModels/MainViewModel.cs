@@ -32,7 +32,6 @@ namespace AttachR.ViewModels
         }
 
         private readonly DebuggingTargetFileSerializer debuggingTargetFileSerializer = new DebuggingTargetFileSerializer();
-        private readonly FileManager fileManager = new FileManager();
         private readonly object debuggingProfileLock = new object();
 
         private string error;

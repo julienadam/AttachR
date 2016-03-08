@@ -8,11 +8,11 @@ namespace AttachR.ViewModels
 {
     public static class DebuggingEngines
     {
-        private const string StorageFile = "KnownDebuugerEngines";
+        private const string StorageFile = "KnownDebuggerEngines";
 
         public static List<DebuggingEngine> AvailableModes => Load() ?? new List<DebuggingEngine>
         {
-            new DebuggingEngine(Guid.NewGuid(), "Select Debugger at next debug session"),
+            new DebuggingEngine(Guid.NewGuid(), "Debuggers will be selected on the next run"),
         };
 
         public static void Save(IEnumerable<DebuggingEngine> debuggers)

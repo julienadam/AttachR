@@ -34,8 +34,6 @@
                 <MenuItem Header="_Open..." x:Name="Open" />
                 <MenuItem Header="_Save" x:Name="Save" />
                 <MenuItem Header="Save _as..." x:Name="SaveAs" />
-                <Separator />
-                <MenuItem Header="_Preferences..." x:Name="Preferences" />
                 <recent:RecentFileList x:Name="RecentFileList"
                                        cal:Message.Attach="[Event MenuClick] = [Action OpenRecent($eventArgs)]" />
                 <MenuItem Header="_Exit" Click="MenuItem_Exit_OnClick" />
