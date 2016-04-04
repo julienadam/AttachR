@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -37,32 +36,36 @@ namespace AttachR.Engine
         public static string GetSolutionForVisualStudio(Process visualStudioProcess)
         {
             _DTE visualStudioInstance;
-            if (TryGetVsInstance(visualStudioProcess.Id, out visualStudioInstance))
+            if (!TryGetVsInstance(visualStudioProcess.Id, out visualStudioInstance))
             {
-                try
-                {
-                    return visualStudioInstance.Solution.FullName;
-                }
-                catch
-                {
-                }
+                return null;
             }
-            return null;
+
+            try
+            {
+                return visualStudioInstance.Solution.FullName;
+            }
+            catch
+            {
+                return null;
+            }
         }
 
-        public static Func<IEnumerable<EnvDTE80.Engine>, IEnumerable<EnvDTE80.Engine>>   RequestDebuggerSelectionCallback;
-
-        public static Process GetAttachedVisualStudio(Process applicationProcess)
+        public static Process GetAttachedVisualStudioProcess(Process applicationProcess)
         {
-            IEnumerable<Process> visualStudios = GetVisualStudioProcesses();
+            var visualStudios = GetVisualStudioProcesses();
 
-            foreach (Process visualStudio in visualStudios)
+            foreach (var visualStudio in visualStudios)
             {
                 _DTE visualStudioInstance;
-                if (!TryGetVsInstance(visualStudio.Id, out visualStudioInstance)) continue;
+                if (!TryGetVsInstance(visualStudio.Id, out visualStudioInstance))
+                {
+                    continue;
+                }
+
                 try
                 {
-                    foreach (Process debuggedProcess in visualStudioInstance.Debugger.DebuggedProcesses
+                    foreach (var debuggedProcess in visualStudioInstance.Debugger.DebuggedProcesses
                         .Cast<Process>()
                         .Where(debuggedProcess => debuggedProcess.Id == applicationProcess.Id))
                     {
@@ -71,70 +74,77 @@ namespace AttachR.Engine
                 }
                 catch
                 {
+                    continue;
                 }
             }
             return null;
         }
 
-        private static Dictionary<string, EnvDTE80.Engine> availableEngines;
-
-        private static EnvDTE80.Engine[] GetSelectedEngines(string[] selected)
-        {
-            try
-            {
-                return selected.Select(e => availableEngines[e]).ToArray();
-            }
-            catch (KeyNotFoundException)
-            {
-                if (RequestDebuggerSelectionCallback == null)
-                {
-                    throw;
-                }
-                return RequestDebuggerSelectionCallback(availableEngines.Values).ToArray();
-            }
-        }
-        public static void AttachVisualStudioToProcess(Process visualStudioProcess, Process applicationProcess, params string[] engines)
+        public static AttachResult AttachVisualStudioToProcess(Process visualStudioProcess, Process applicationProcess, bool customDebuggingEngines, params string[] engines)
         {
             _DTE visualStudioInstance;
-            if (!TryGetVsInstance(visualStudioProcess.Id, out visualStudioInstance)) return;
-
-            if (availableEngines == null)
+            if (!TryGetVsInstance(visualStudioProcess.Id, out visualStudioInstance))
             {
-                availableEngines = GetEngines((Debugger2) visualStudioInstance.Debugger).ToDictionary(e => e.Name);
+                return AttachResult.VisualStudioInstanceNotFound;
             }
 
+            var availableEngines = GetEngines(visualStudioInstance).ToDictionary(e => e.Name);
+
             //Find the process you want the VS instance to attach to...
-            EnvDTE.Process processToAttachTo = visualStudioInstance.Debugger.LocalProcesses.Cast<EnvDTE.Process>().FirstOrDefault(process => process.ProcessID == applicationProcess.Id);
+            var processToAttachTo = visualStudioInstance.Debugger.LocalProcesses.Cast<EnvDTE.Process>().FirstOrDefault(process => process.ProcessID == applicationProcess.Id);
 
             //Attach to the process.
-            if (processToAttachTo != null)
+            if (processToAttachTo == null)
             {
-                var selectedEngines = GetSelectedEngines(engines);
+                return AttachResult.TargetApplicatioNotFound;
+            }
 
-                if (selectedEngines.Length > 0)
+            if (customDebuggingEngines)
+            {
+                var selectedEngines = GetSelectedEngines(availableEngines, engines);
+                if (selectedEngines.Length == 0)
                 {
-                    var process3 = (EnvDTE90.Process3) processToAttachTo;
+                    return AttachResult.NoEngineSelected;
+                }
+
+                try
+                {
+                    var process3 = (EnvDTE90.Process3)processToAttachTo;
                     process3.Attach2(selectedEngines);
                 }
-                else
+                catch (COMException ex)
                 {
-                    processToAttachTo.Attach();
+                    return ex.HResult == -1989083106 ? AttachResult.InvalidEngine : AttachResult.UnknownException;
                 }
-
-                ShowWindow((int)visualStudioProcess.MainWindowHandle, 3);
-                SetForegroundWindow(visualStudioProcess.MainWindowHandle);
             }
             else
             {
-                throw new InvalidOperationException("Visual Studio process cannot find specified application '" + applicationProcess.Id + "'");
+                try
+                {
+                    processToAttachTo.Attach();
+                }
+                catch (COMException)
+                {
+                    return AttachResult.UnknownException;
+                }
             }
+
+            ShowWindow((int)visualStudioProcess.MainWindowHandle, 3);
+            SetForegroundWindow(visualStudioProcess.MainWindowHandle);
+
+            return AttachResult.NoError;
+        }
+
+        private static EnvDTE80.Engine[] GetSelectedEngines(IReadOnlyDictionary<string, EnvDTE80.Engine> availableEngines, IEnumerable<string> engines)
+        {
+            return engines.Select(e => availableEngines[e]).Where(e => e != null).ToArray();
         }
 
         public static Process GetVisualStudioForSolutions(List<string> solutionNames)
         {
-            foreach (string solution in solutionNames)
+            foreach (var solution in solutionNames)
             {
-                Process visualStudioForSolution = GetVisualStudioForSolution(solution);
+                var visualStudioForSolution = GetVisualStudioProcessForSolution(solution);
                 if (visualStudioForSolution != null)
                 {
                     return visualStudioForSolution;
@@ -143,38 +153,61 @@ namespace AttachR.Engine
             return null;
         }
 
-        public static Process GetVisualStudioForSolution(string solutionName)
+        private static bool FindVisualStudioInstanceForSolution(string solutionName, out Process vsProcess, out _DTE vsInstance)
         {
-            IEnumerable<Process> visualStudios = GetVisualStudioProcesses();
+            var visualStudios = GetVisualStudioProcesses();
 
-            foreach (Process visualStudio in visualStudios)
+            foreach (var visualStudio in visualStudios)
             {
                 _DTE visualStudioInstance;
-                if (TryGetVsInstance(visualStudio.Id, out visualStudioInstance))
+                if (!TryGetVsInstance(visualStudio.Id, out visualStudioInstance))
                 {
-                    try
-                    {
-                        string actualSolutionName = Path.GetFileName(visualStudioInstance.Solution.FullName);
+                    continue;
+                }
 
-                        if (string.Compare(actualSolutionName, solutionName, StringComparison.InvariantCultureIgnoreCase) == 0)
-                        {
-                            return visualStudio;
-                        }
-                    }
-                    catch (Exception)
-                    {
-                    }
+                string fullSolutionName;
+                try
+                {
+                    fullSolutionName = visualStudioInstance.Solution.FullName;
+                }
+                catch (Exception)
+                {
+                    continue;
+                }
+
+                if (string.Compare(new FileInfo(fullSolutionName).FullName, new FileInfo(solutionName).FullName, StringComparison.InvariantCultureIgnoreCase) == 0)
+                {
+                    vsProcess = visualStudio;
+                    vsInstance = visualStudioInstance;
+                    return true;
                 }
             }
-            return null;
+
+            vsProcess = null;
+            vsInstance = null;
+            return false;
         }
-        
+
+        public static Process GetVisualStudioProcessForSolution(string solutionName)
+        {
+            Process process;
+            _DTE dte;
+            return FindVisualStudioInstanceForSolution(solutionName, out process, out dte) ? process : null;
+        }
+
+        public static _DTE GetVisualStudioInstanceForSolution(string solutionName)
+        {
+            Process process;
+            _DTE dte;
+            return FindVisualStudioInstanceForSolution(solutionName, out process, out dte) ? dte : null;
+        }
+
         private static IEnumerable<Process> GetVisualStudioProcesses()
         {
-            Process[] processes = Process.GetProcesses();
+            var processes = Process.GetProcesses();
             return processes.Where(o => o.ProcessName.Contains("devenv"));
         }
-        
+
         private static bool TryGetVsInstance(int processId, out _DTE instance)
         {
             var numFetched = IntPtr.Zero;
@@ -195,18 +228,20 @@ namespace AttachR.Engine
 
                 object runningObjectVal;
                 runningObjectTable.GetObject(monikers[0], out runningObjectVal);
-                
-                if (runningObjectName.StartsWith("!VisualStudio.DTE"))
-                {
-                    var dte = runningObjectVal as _DTE;
 
-                    var split = runningObjectName.Split(':');
-                    int processIdFromDte;
-                    if (split.Length == 2 && int.TryParse(split[1], out processIdFromDte) && processIdFromDte == processId)
-                    {
-                        instance = dte;
-                        return true;
-                    }
+                if (!runningObjectName.StartsWith("!VisualStudio.DTE"))
+                {
+                    continue;
+                }
+
+                var dte = runningObjectVal as _DTE;
+
+                var split = runningObjectName.Split(':');
+                int processIdFromDte;
+                if (split.Length == 2 && int.TryParse(split[1], out processIdFromDte) && processIdFromDte == processId)
+                {
+                    instance = dte;
+                    return true;
                 }
             }
 
@@ -214,13 +249,38 @@ namespace AttachR.Engine
             return false;
         }
 
-        public static IEnumerable<EnvDTE80.Engine> GetEngines(Debugger2 debugger)
+        public static IEnumerable<EnvDTE80.Engine> GetEngines(_DTE dte)
         {
+            var debugger = (Debugger2)dte.Debugger;
             var engines = debugger.Transports.Item("Default").Engines;
-            foreach (var x in engines)
+            for (int i = 0; i < engines.Count; i++)
             {
-                yield return (EnvDTE80.Engine)x;
+                yield return engines.Item(i+1);
             }
+        }
+
+        public static string[] GetAvailableEngines(Process currentVisualStudioProcess, string visualStudioSolutionPath)
+        {
+            if (currentVisualStudioProcess != null)
+            {
+                _DTE dte;
+                if (TryGetVsInstance(currentVisualStudioProcess.Id, out dte))
+                {
+                    var engines = GetEngines(dte);
+                    return engines.Select(x => x.Name).ToArray();
+                }
+            }
+            else
+            {
+                var vsForSolution = GetVisualStudioInstanceForSolution(visualStudioSolutionPath);
+                if (vsForSolution != null)
+                {
+                    var engines = GetEngines(vsForSolution);
+                    return engines.Select(x => x.Name).ToArray();
+                }
+            }
+
+            return null;
         }
     }
 }

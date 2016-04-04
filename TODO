@@ -1,11 +1,18 @@
 FEATURES:
+- Find a way to get the list of available debuggers for VS
+	- Allow user to select a version of VS that is currently running and get the engines from there ?
+- Templating system for command-lines ?
+- Remove checkbox, replace with tri-state button start/debug/none. Replace global debug/run with a single run button.
+- Match existing processes and allow attaching / killing after the fact
+- Solution box should list currently loaded solution if VS is running
 - Auto-load last profile
 - Auto-start on login
 - Register extension for double clicking profile files
 - Allow configuration of hotkeys
 - Add command line argument to load a specified profile file
 - Installer
+- Theme color picker
 
 BUGS:
 -Fix the length of the arguments textbox causing the whole listbox to overflow and display scrollbars
--Can't attach from a UAC elevated app to a non elevated VS.NET
+-Can't attach from a UAC elevated app to a non elevated VS.NET, find a way to downgrade ?

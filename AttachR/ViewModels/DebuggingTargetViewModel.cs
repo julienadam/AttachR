@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
@@ -18,22 +19,10 @@ namespace AttachR.ViewModels
         private Process currentProcess;
         private ImageSource icon;
         private bool selected;
+        private bool useCustomDebuggingEngines;
 
         public DebuggingTargetViewModel()
         {
-            BindDebuggingEntries();
-        }
-
-        public void BindDebuggingEntries()
-        {
-            DebuggingEngines = new BindingList<DebuggingEngineViewModel>(
-                ViewModels.DebuggingEngines.AvailableModes
-                    .Select(x => new DebuggingEngineViewModel
-                    {
-                        Id = x.Id,
-                        Name = x.Name,
-                        Selected = false,
-                    }).ToList());
         }
 
         private DebuggingTargetViewModel(BindingList<DebuggingEngineViewModel> engines)
@@ -142,9 +131,42 @@ namespace AttachR.ViewModels
 
         public BindingList<DebuggingEngineViewModel> DebuggingEngines { get; set; }
 
+        [JsonIgnore]
+        public bool UseCustomDebuggingEngines
+        {
+            get { return useCustomDebuggingEngines; }
+            set
+            {
+                if (value == useCustomDebuggingEngines) return;
+                useCustomDebuggingEngines = value;
+                NotifyOfPropertyChange();
+            }
+        }
+
+        [JsonIgnore]
+        public List<string> SelectedDebuggingEngines { get; set; }
+
+        public void SetDebuggingEngineSelector(Func<IEnumerable<string>> selector)
+        {
+            if (SelectedDebuggingEngines == null)
+            {
+                SelectedDebuggingEngines = new List<string>();
+            }
+
+            var availableEngines = selector();
+            if (availableEngines == null)
+            {
+                DebuggingEngines = new BindingList<DebuggingEngineViewModel>();
+            }
+            else
+            {
+                var engineListWithSelection = availableEngines.Select(x => new DebuggingEngineViewModel { Name = x, Selected = SelectedDebuggingEngines.Contains(x) }).ToList();
+                DebuggingEngines = new BindingList<DebuggingEngineViewModel>(engineListWithSelection);
+            }
+        }
+
         public void Closing()
         {
-            
         }
 
         public void BrowseForExe(DebuggingTargetViewModel target)
@@ -177,7 +199,7 @@ namespace AttachR.ViewModels
 
         public object Clone()
         {
-            var list = DebuggingEngines.Select(e => (DebuggingEngineViewModel) e.Clone()).ToList();
+            var list = DebuggingEngines?.Select(e => (DebuggingEngineViewModel) e.Clone()).ToList() ?? new List<DebuggingEngineViewModel>();
             return 
                 new DebuggingTargetViewModel(new BindingList<DebuggingEngineViewModel>(list))
                 {
@@ -189,6 +211,7 @@ namespace AttachR.ViewModels
                     CommandLineArguments = CommandLineArguments,
                     CurrentProcess = CurrentProcess,
                     Selected = Selected,
+                    UseCustomDebuggingEngines = UseCustomDebuggingEngines
                 };
         }
     }

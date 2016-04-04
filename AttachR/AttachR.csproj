@@ -143,7 +143,9 @@
     <Compile Include="Components\Recent\IRecentFileListPersister.cs" />
     <Compile Include="Components\Recent\RegistryPersister.cs" />
     <Compile Include="Components\SingleInstanceChecker.cs" />
+    <Compile Include="Engine\AttachResult.cs" />
     <Compile Include="Engine\Retrier.cs" />
+    <Compile Include="Engine\RunningVisualStudioInstanceInfo.cs" />
     <Compile Include="IsNotNullOrEmptyConverter.cs" />
     <Compile Include="IsNullConverter.cs" />
     <Compile Include="Commands\LocalCommands.cs" />
@@ -151,7 +153,6 @@
     <Compile Include="Models\Preferences.cs" />
     <Compile Include="Serializers\IPreferencesSerializer.cs" />
     <Compile Include="Serializers\PreferencesSerializer.cs" />
-    <Compile Include="ViewModels\DebuggingEngines.cs" />
     <Compile Include="ViewModels\DebuggingEngineViewModel.cs" />
     <Compile Include="ViewModels\DebuggingEnginViewModel.cs" />
     <Compile Include="ViewModels\DebuggingProfileViewModel.cs" />

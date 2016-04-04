@@ -16,20 +16,10 @@ namespace AttachR.ViewModels
 {
     public class MainViewModel : PropertyChangedBase, IHandle<RunAllCommand>, IHandle<StopAllCommand>
     {
-        private readonly IRecentFileListPersister persister;
         private readonly IWindowManager windowManager;
         private readonly IPreferencesSerializer preferencesSerializer;
         private const string FILE_DIALOG_FILTERS = "Debug profiles|*.dpf|All Files|*.*";
         private readonly Maestro maestro;
-
-        private IEnumerable<DebuggingEngine> EngineSelectionRequired(DebuggingTargetViewModel debuggingTargetViewModel, IEnumerable<DebuggingEngine> available)
-        {
-            var list = available.ToList();
-            DebuggingEngines.Save(list);
-            debuggingTargetViewModel.BindDebuggingEntries();
-            EditExecutable(debuggingTargetViewModel);
-            return debuggingTargetViewModel.DebuggingEngines.Where(d => d.Selected);
-        }
 
         private readonly DebuggingTargetFileSerializer debuggingTargetFileSerializer = new DebuggingTargetFileSerializer();
         private readonly object debuggingProfileLock = new object();
@@ -55,14 +45,14 @@ namespace AttachR.ViewModels
             if (preferencesSerializer == null) throw new ArgumentNullException(nameof(preferencesSerializer));
 
             this.aggregator = aggregator;
-            this.persister = persister;
+            this.Persister = persister;
             this.windowManager = windowManager;
             this.preferencesSerializer = preferencesSerializer;
 
             aggregator.Subscribe(this);
 
             DebuggingProfile = new DebuggingProfileViewModel();
-            maestro = new Maestro(EngineSelectionRequired);
+            maestro = new Maestro();
             timer = new Timer(state => CheckExitedProcesses(), null, TimeSpan.Zero, TimeSpan.FromSeconds(5));
         }
 
@@ -137,7 +127,7 @@ namespace AttachR.ViewModels
             }
         }
 
-        public IRecentFileListPersister Persister => persister;
+        public IRecentFileListPersister Persister { get; }
 
         private void Clear()
         {
@@ -147,6 +137,11 @@ namespace AttachR.ViewModels
         private void Load(DebuggingProfileViewModel profile, string filePath)
         {
             DebuggingProfile = profile;
+            foreach (var target in profile.Targets)
+            {
+                target.SetDebuggingEngineSelector(GetAvailableEnginesFromVisualStudio);
+            }
+
             FileName = filePath;
             Error = "";
             IsDirty = false;
@@ -205,7 +200,7 @@ namespace AttachR.ViewModels
             {
                 debuggingTargetFileSerializer.Save(newFileName, DebuggingProfile);
                 FileName = newFileName;
-                persister.InsertFile(newFileName);
+                Persister.InsertFile(newFileName);
             }
             catch (Exception ex)
             {
@@ -224,14 +219,14 @@ namespace AttachR.ViewModels
             {
                 Error = $"Could not load data from {filePath}. File does not exist";
 
-                persister.RemoveFile(filePath);
+                Persister.RemoveFile(filePath);
                 return;
             }
 
             try
             {
                 Load(debuggingTargetFileSerializer.Open(filePath), filePath);
-                persister.InsertFile(filePath);
+                Persister.InsertFile(filePath);
             }
             catch (Exception ex)
             {
@@ -369,6 +364,8 @@ namespace AttachR.ViewModels
         public void EditExecutable(DebuggingTargetViewModel target)
         {
             var clone = (DebuggingTargetViewModel) target.Clone();
+            clone.SetDebuggingEngineSelector(GetAvailableEnginesFromVisualStudio);
+
             if (windowManager.ShowDialog(clone) != true)
             {
                 return;
@@ -379,5 +376,13 @@ namespace AttachR.ViewModels
             DebuggingProfile.Targets.Insert(index, clone);
         }
 
+        public IEnumerable<string> GetAvailableEnginesFromVisualStudio()
+        {
+            var engines = VisualStudioAttacher.GetAvailableEngines(
+                DebuggingProfile.CurrentVisualStudioProcess,
+                DebuggingProfile.VisualStudioSolutionPath);
+
+            return engines.OrderBy(s => s);
+        }
     }
 }

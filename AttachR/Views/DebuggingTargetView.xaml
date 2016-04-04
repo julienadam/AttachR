@@ -8,7 +8,7 @@
                       xmlns:viewModels="clr-namespace:AttachR.ViewModels"
                       d:DataContext="{d:DesignInstance Type=viewModels:DebuggingTargetViewModelWithSampleData, IsDesignTimeCreatable=True}"
                       mc:Ignorable="d"
-                      Title="AttachR debugging target" Height="500" Width="900" BorderThickness="1" BorderBrush="Black"
+                      Title="AttachR debugging target" Height="697.314" Width="746.074" BorderThickness="1" BorderBrush="Black"
                       cal:Message.Attach="[Event Closing] = [Action Closing()]">
     <Grid>
         <Grid.ColumnDefinitions>
@@ -18,8 +18,8 @@
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="120" />
+            <RowDefinition Height="120" />
             <RowDefinition Height="*" />
-            <RowDefinition Height="200" />
             <RowDefinition Height="40" />
         </Grid.RowDefinitions>
 
@@ -70,17 +70,39 @@
                 x:Name="CommandLineArguments"
                 controls:TextBoxHelper.Watermark="Enter command line arguments here" />
         </GroupBox>
-        <GroupBox Header="Debugging (uncheck all to skip attaching a debugger)" Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="2">
-            <ListBox ItemsSource="{Binding DebuggingEngines, Mode=OneWay}">
-                <ListBox.ItemTemplate>
-                    <DataTemplate>
-                        <StackPanel Orientation="Horizontal">
-                            <CheckBox Name="Selected" IsChecked="{Binding Selected}" />
-                            <TextBlock Name="Name" Text="{Binding Name}" />
-                        </StackPanel>
-                    </DataTemplate>
-                </ListBox.ItemTemplate>
-            </ListBox>
+
+        <GroupBox Header="Debugging" Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="2">
+            <Grid>
+                <Grid.Resources>
+                    <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+                </Grid.Resources>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="30"></RowDefinition>
+                    <RowDefinition Height="*"></RowDefinition>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="50"></ColumnDefinition>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <CheckBox Name="LetVsDecideEngine" Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2"  IsChecked="{Binding Path=UseCustomDebuggingEngines, Mode=TwoWay}" 
+                          ToolTip="When checked, and Visual Studio is running, with the solution open, you will be given a list of debugging engines available and will be able to select the ones you want to debug with.\r\nWhen left unchecked, Visual Studio will decide automatically which debugging engine to use (e.g. Native, Managed etc.).\r\n">
+                    <Label>Use custom debugging engines (Only available when VS is running, and the solution is open)</Label>
+                </CheckBox>
+
+                <ListBox ItemsSource="{Binding DebuggingEngines, Mode=OneWay}" Grid.Column="1" Grid.Row="1" Visibility="{Binding Path=UseCustomDebuggingEngines, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <CheckBox Name="Selected" IsChecked="{Binding Selected}" />
+                                <TextBlock Name="Name" Text="{Binding Name}" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </Grid>
+
+
+
         </GroupBox>
 
         <Button Grid.Column="1" Grid.Row="3" Margin="3" Name="Ok">OK</Button>

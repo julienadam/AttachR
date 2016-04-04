@@ -24,21 +24,7 @@ namespace AttachR.Serializers
                         .Select(e => e.Name)
                         .ToList();
                 });
-            AutoMapper.Mapper
-                .CreateMap<DebuggingTarget, DebuggingTargetViewModel>()
-                .AfterMap((target, model) =>
-                {
-                    if (target.SelectedDebuggingEngines == null)
-                    {
-                        return;
-                    }
-                    foreach (var foundEngine in target.SelectedDebuggingEngines
-                        .Select(localEngine => model.DebuggingEngines.FirstOrDefault(x => x.Name == localEngine))
-                        .Where(foundEngine => foundEngine != null))
-                    {
-                        foundEngine.Selected = true;
-                    }
-                });
+            AutoMapper.Mapper.CreateMap<DebuggingTarget, DebuggingTargetViewModel>();
         }
 
         private readonly JsonSerializerSettings settings = new JsonSerializerSettings
