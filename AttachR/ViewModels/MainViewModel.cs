@@ -8,6 +8,7 @@ using AttachR.Commands;
 using AttachR.Components.Recent;
 using AttachR.Engine;
 using AttachR.Serializers;
+using AttachR.VisualStudio;
 using Caliburn.Micro;
 using JetBrains.Annotations;
 using Microsoft.Win32;
@@ -378,11 +379,11 @@ namespace AttachR.ViewModels
 
         public IEnumerable<string> GetAvailableEnginesFromVisualStudio()
         {
-            var engines = VisualStudioAttacher.GetAvailableEngines(
+            var engines = DebuggingEngineDetector.GetAvailableEngines(
                 DebuggingProfile.CurrentVisualStudioProcess,
                 DebuggingProfile.VisualStudioSolutionPath);
 
-            return engines.OrderBy(s => s);
+            return engines.Select(e => e.Name).OrderBy(s => s);
         }
     }
 }

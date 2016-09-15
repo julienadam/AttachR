@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using AttachR.ViewModels;
+using AttachR.VisualStudio;
 
 namespace AttachR.Engine
 {
@@ -19,7 +19,7 @@ namespace AttachR.Engine
             {
                 try
                 {
-                    visualStudioProcess = Retrier.RunWithRetryOnException(() => VisualStudioAttacher.GetVisualStudioProcessForSolution(visualStudioSolutionPath));
+                    visualStudioProcess = Retrier.RunWithRetryOnException(() => InstanceFinder.GetVisualStudioProcessForSolution(visualStudioSolutionPath));
                 }
                 catch (AggregateException ex)
                 {
@@ -68,7 +68,7 @@ namespace AttachR.Engine
                     localTarget.LastError = "";
                     if (engineModes.Any())
                     {
-                        var result = Retrier.RunWithRetryOnException(() => VisualStudioAttacher.AttachVisualStudioToProcess(visualStudioProcess, process, !target.UseCustomDebuggingEngines, engineModes));
+                        var result = Retrier.RunWithRetryOnException(() => Attacher.AttachVisualStudioToProcess(visualStudioProcess, process, !target.UseCustomDebuggingEngines, engineModes));
                         localTarget.LastError = GetError(result);
                     }
                 }

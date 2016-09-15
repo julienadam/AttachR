@@ -1,54 +1,30 @@
 using System;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
-using JetBrains.Annotations;
 
 namespace AttachR.ViewModels
 {
-    public class DebuggingEngine : INotifyPropertyChanged
+    public class DebuggingEngineViewModel : DebuggingEngine, ICloneable
     {
-        private Guid id;
-        private string name;
-       
-        public Guid Id
+        private bool selected;
+
+        public bool Selected
         {
-            get { return id; }
+            get { return selected; }
             set
             {
-                if (value.Equals(id)) return;
-                id = value;
+                if (value.Equals(selected)) return;
+                selected = value;
                 OnPropertyChanged();
             }
         }
 
-        public string Name
+        public object Clone()
         {
-            get { return name; }
-            set
+            return new DebuggingEngineViewModel()
             {
-                if (value == name) return;
-                name = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public DebuggingEngine()
-        {
-        }
-
-        public DebuggingEngine(Guid id, string name)
-        {
-            Id = id;
-            Name = name;
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        [NotifyPropertyChangedInvocator]
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            var handler = PropertyChanged;
-            if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
+                Id = Id,
+                Selected = Selected,
+                Name = Name
+            };
         }
     }
 }

@@ -153,8 +153,8 @@
     <Compile Include="Models\Preferences.cs" />
     <Compile Include="Serializers\IPreferencesSerializer.cs" />
     <Compile Include="Serializers\PreferencesSerializer.cs" />
+    <Compile Include="ViewModels\DebuggingEngine.cs" />
     <Compile Include="ViewModels\DebuggingEngineViewModel.cs" />
-    <Compile Include="ViewModels\DebuggingEnginViewModel.cs" />
     <Compile Include="ViewModels\DebuggingProfileViewModel.cs" />
     <Compile Include="ViewModels\DebuggingTargetViewModel.cs" />
     <Compile Include="ViewModels\DebuggingTargetViewModelWithSampleData.cs" />
@@ -183,7 +183,12 @@
     </Compile>
     <Compile Include="Engine\Maestro.cs" />
     <Compile Include="Engine\RunResult.cs" />
-    <Compile Include="Engine\VisualStudioAttacher.cs" />
+    <Compile Include="VisualStudio\AvailableVisualStudioInstall.cs" />
+    <Compile Include="VisualStudio\DebuggingEngine.cs" />
+    <Compile Include="VisualStudio\DebuggingEngineDetector.cs" />
+    <Compile Include="VisualStudio\DebuggingEngines.cs" />
+    <Compile Include="VisualStudio\InstanceFinder.cs" />
+    <Compile Include="VisualStudio\Attacher.cs" />
     <Compile Include="ViewModels\MainViewModelWithSampleData.cs" />
     <Compile Include="Views\DebuggingTargetView.xaml.cs">
       <DependentUpon>DebuggingTargetView.xaml</DependentUpon>
