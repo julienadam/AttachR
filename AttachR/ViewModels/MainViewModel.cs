@@ -35,9 +35,9 @@ namespace AttachR.ViewModels
         private Timer timer;
 
         public MainViewModel(
-            [NotNull] IRecentFileListPersister persister, 
+            [NotNull] IRecentFileListPersister persister,
             [NotNull] IEventAggregator aggregator,
-            [NotNull] IWindowManager windowManager, 
+            [NotNull] IWindowManager windowManager,
             [NotNull] IPreferencesSerializer preferencesSerializer)
         {
             if (persister == null) throw new ArgumentNullException(nameof(persister));
@@ -82,7 +82,7 @@ namespace AttachR.ViewModels
                 }
                 fileName = value;
                 NotifyOfPropertyChange(() => FileName);
-            } 
+            }
         }
 
         public bool IsDirty
@@ -263,7 +263,7 @@ namespace AttachR.ViewModels
         {
             RunOrDebugAll(true);
         }
-        
+
         private void RunOrDebugAll(bool debug)
         {
             try
@@ -301,13 +301,23 @@ namespace AttachR.ViewModels
                 }
             }
         }
-        
+
         public void RemoveExecutable(DebuggingTargetViewModel target)
         {
             lock (debuggingProfileLock)
             {
                 DebuggingProfile.Targets.Remove(target);
             }
+        }
+
+        public void DuplicateExecutable(DebuggingTargetViewModel target)
+        {
+            var copy = (DebuggingTargetViewModel) target.Clone();
+            lock (debuggingProfileLock)
+            {
+                DebuggingProfile.Targets.Add(copy);
+            }
+            EditExecutable(copy);
         }
 
         public void BrowseForSolution()
@@ -351,7 +361,7 @@ namespace AttachR.ViewModels
         {
             RunAll();
         }
-        
+
         public void Handle(DebugAllCommand message)
         {
             DebugAll();
