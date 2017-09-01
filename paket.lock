@@ -1,0 +1,26 @@
+NUGET
+  remote: https://www.nuget.org/api/v2
+    AutoMapper (3) - restriction: >= net451
+    Caliburn.Micro (3.1) - restriction: >= net451
+      Caliburn.Micro.Core (3.1)
+    Caliburn.Micro.Core (3.1) - restriction: >= net451
+    Hardcodet.NotifyIcon.Wpf (1.0.8) - restriction: >= net451
+    JetBrains.Annotations.Redist (7.1) - restriction: >= net451
+    MahApps.Metro (1.5) - restriction: >= net451
+    Newtonsoft.Json (10.0.3) - restriction: >= net451
+    NFluent (2.0) - restriction: >= net452
+    NHotkey (1.2.1) - restriction: >= net451
+    NHotkey.Wpf (1.2.1) - restriction: >= net451
+      NHotkey (>= 1.2.1)
+    xunit (2.2) - restriction: >= net452
+      xunit.assert (2.2)
+      xunit.core (2.2)
+    xunit.abstractions (2.0.1) - restriction: >= net452
+    xunit.assert (2.2) - restriction: >= net452
+    xunit.core (2.2) - restriction: >= net452
+      xunit.extensibility.core (2.2)
+      xunit.extensibility.execution (2.2)
+    xunit.extensibility.core (2.2) - restriction: >= net452
+      xunit.abstractions (>= 2.0.1) - restriction: >= netstandard1.1
+    xunit.extensibility.execution (2.2) - restriction: >= net452
+      xunit.extensibility.core (2.2) - restriction: >= netstandard1.1

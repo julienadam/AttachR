@@ -218,3 +218,9 @@ Pickles/
 
 # VS 14 IDE files
 *.sln.ide/
+
+# Paket folder
+.paket/paket.exe
+.paket/paket.targets
+
+.vs/

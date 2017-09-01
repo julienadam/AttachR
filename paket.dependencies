@@ -1,0 +1,17 @@
+source https://www.nuget.org/api/v2/
+
+nuget AutoMapper 3 restriction: >= net451
+nuget Caliburn.Micro restriction: >= net451
+nuget Caliburn.Micro.Core restriction: >= net451
+nuget Hardcodet.NotifyIcon.Wpf restriction: >= net451
+nuget JetBrains.Annotations.Redist restriction: >= net451
+nuget MahApps.Metro restriction: >= net451
+nuget Newtonsoft.Json restriction: >= net451
+nuget NFluent restriction: >= net452
+nuget NHotkey restriction: >= net451
+nuget NHotkey.Wpf restriction: >= net451
+nuget xunit restriction: >= net452
+nuget xunit.abstractions restriction: >= net452
+nuget xunit.assert restriction: >= net452
+nuget xunit.core restriction: >= net452
+nuget xunit.extensibility.core restriction: >= net452
