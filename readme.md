@@ -1,4 +1,4 @@
-﻿#AttachR
+﻿# AttachR
 
 [![AttachR build status on AppVeyor](https://ci.appveyor.com/api/projects/status/n5avheg2xxyqoldr?svg=true)](https://ci.appveyor.com/project/julienadam/attachr/history)
 
@@ -6,7 +6,7 @@ AttachR is a simple tool that launches executables and automatically attaches th
 
 ***
 
-###Creating a profile
+### Creating a profile
 
 1. First, enter the full path of the .sln file in the main window (or browse for it)
 2. Use the `+` button to add a process
@@ -18,7 +18,7 @@ AttachR is a simple tool that launches executables and automatically attaches th
 3. Add all the executables you need, use the edit or delete buttons if needed
 4. Save the profile (File / Save as...)
 
-###Usage
+### Usage
 
 1. Open the profile with either file / open, or use the recent menu
 2. Make sure Visual Studio is running and the corresponding solution is open, or click the open solution button to open it
@@ -26,7 +26,7 @@ AttachR is a simple tool that launches executables and automatically attaches th
 4. To debug multiple processes or stop them, make sure they’re selected (checkbox on the left) and press the play / stop buttons on the bottom
 5. There are also global hotkeys for starting / stopping all selected processes. To start / stop press `CTRL-ALT-PLAY` / `CTRL-ALT-STOP` if you have a multimedia keyboard, or use `WIN-F5` / `WIN-SHIFT-F5` if you don’t (these hotkeys are hardcoded for now)
 
-###F.A.Q.
+### F.A.Q.
 
 >Attaching doesn't work !
 
