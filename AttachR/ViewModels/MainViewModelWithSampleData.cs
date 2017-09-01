@@ -1,6 +1,5 @@
 using System.ComponentModel;
 using AttachR.Components.Recent;
-using AttachR.Models;
 using AttachR.Serializers;
 using Caliburn.Micro;
 
@@ -15,7 +14,7 @@ namespace AttachR.ViewModels
             {
                 new DebuggingTargetViewModel
                 {
-                    CommandLineArguments = "Some arguments",
+                    CommandLineArguments = "Some really long arguments that will hopefully trigger the resize bug on the target parameters control that forces the control to the size of the text instead of having a size relative to the size of the window",
                     Executable = @"C:\Windows\notepad.exe",
                     WorkingDirectory = @"C:\Windows\Temp\",
                     Selected = true

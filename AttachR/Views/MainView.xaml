@@ -129,12 +129,11 @@
         </DockPanel>
 
         <GroupBox Name="GroupBox" Header="Executables to debug" DockPanel.Dock="Bottom">
-            <ListBox Height="Auto" ItemsSource="{Binding Path=DebuggingProfile.Targets, Mode=TwoWay}"
-                     HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
+            <ListBox Height="Auto" ItemsSource="{Binding Path=DebuggingProfile.Targets, Mode=TwoWay}" Name="lbItems">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
-                        <DockPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                            <Grid DockPanel.Dock="Top" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" >
+                        <DockPanel Name="dockPanelExecutables">
+                            <Grid DockPanel.Dock="Top" Width="{Binding ElementName=dockPanelExecutables, Path=ActualWidth}">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="30" />
                                     <ColumnDefinition Width="70"  />
@@ -146,7 +145,7 @@
                                     <ColumnDefinition Width="60" />
                                 </Grid.ColumnDefinitions>
                                 <Grid.RowDefinitions>
-                                    <RowDefinition Height="60" />
+                                    <RowDefinition Height="70" />
                                 </Grid.RowDefinitions>
 
                                 <CheckBox Grid.Column="0" Grid.Row="0" x:Name="Selected"
@@ -168,16 +167,16 @@
                                     </StackPanel>
                                 </StackPanel>
 
-                                <Grid Grid.Column="2" Grid.Row="0">
+                                <Grid Grid.Column="2" Grid.Row="0" Name="gridArgs">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="110" />
-                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*" Name="col2Args" />
                                     </Grid.ColumnDefinitions>
                                     <Grid.RowDefinitions>
-                                        <RowDefinition Height="15" />
-                                        <RowDefinition Height="15" />
-                                        <RowDefinition Height="15" />
-                                        <RowDefinition Height="15" />
+                                        <RowDefinition Height="17" />
+                                        <RowDefinition Height="17" />
+                                        <RowDefinition Height="17" />
+                                        <RowDefinition Height="17" />
                                     </Grid.RowDefinitions>
 
                                     <TextBlock Grid.Column="0" Grid.Row="0">Executable :</TextBlock>
