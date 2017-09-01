@@ -66,11 +66,8 @@ namespace AttachR.Engine
                 {
                     var engineModes = localTarget.DebuggingEngines.Where(x => x.Selected).Select(x => x.Name).ToArray();
                     localTarget.LastError = "";
-                    if (engineModes.Any())
-                    {
-                        var result = Retrier.RunWithRetryOnException(() => Attacher.AttachVisualStudioToProcess(visualStudioProcess, process, !target.UseCustomDebuggingEngines, engineModes));
-                        localTarget.LastError = GetError(result);
-                    }
+                    var result = Retrier.RunWithRetryOnException(() => Attacher.AttachVisualStudioToProcess(visualStudioProcess, process, target.UseCustomDebuggingEngines, engineModes));
+                    localTarget.LastError = GetError(result);
                 }
                 catch (AggregateException ex)
                 {
