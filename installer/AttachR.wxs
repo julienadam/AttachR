@@ -19,9 +19,7 @@
     <UIRef Id="WixUI_Minimal" />
     <UIRef Id="WixUI_ErrorProgressText" />
     <WixVariable Id="WixUILicenseRtf" Value="License.rtf" />
-  
-    
-  
+
     <Directory Id='TARGETDIR' Name='SourceDir'>
       <Directory Id='ProgramFilesFolder' Name='PFiles'>
         <Directory Id='INSTALLDIR' Name='AttachR'>

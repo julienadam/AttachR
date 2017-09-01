@@ -12,6 +12,8 @@ NUGET
     NHotkey (1.2.1) - restriction: >= net451
     NHotkey.Wpf (1.2.1) - restriction: >= net451
       NHotkey (>= 1.2.1)
+    ParaffinBundler (3.61)
+    WiX.Toolset (3.9.1208)
     xunit (2.2) - restriction: >= net452
       xunit.assert (2.2)
       xunit.core (2.2)

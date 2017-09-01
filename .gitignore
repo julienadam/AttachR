@@ -224,3 +224,8 @@ Pickles/
 .paket/paket.targets
 
 .vs/
+
+*.msi
+*.wixobj
+*.wixpdb
+*files.wxs
