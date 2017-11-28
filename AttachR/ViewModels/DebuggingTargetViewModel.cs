@@ -6,6 +6,7 @@ using System.Linq;
 using System.Windows.Media;
 using AttachR.Serializers;
 using Caliburn.Micro;
+using JetBrains.Annotations;
 using Newtonsoft.Json;
 
 namespace AttachR.ViewModels
@@ -23,11 +24,12 @@ namespace AttachR.ViewModels
 
         public DebuggingTargetViewModel()
         {
+            DebuggingEngines = new BindingList<DebuggingEngineViewModel>();
         }
 
-        private DebuggingTargetViewModel(BindingList<DebuggingEngineViewModel> engines)
+        private DebuggingTargetViewModel([NotNull] BindingList<DebuggingEngineViewModel> engines)
         {
-            DebuggingEngines = engines;
+            DebuggingEngines = engines ?? throw new ArgumentNullException(nameof(engines));
         }
 
         [JsonIgnore]
@@ -129,7 +131,8 @@ namespace AttachR.ViewModels
         [JsonIgnore]
         public string CurrentProcessId => CurrentProcess?.Id.ToString() ?? "None";
 
-        public BindingList<DebuggingEngineViewModel> DebuggingEngines { get; set; }
+        [NotNull]
+        public BindingList<DebuggingEngineViewModel> DebuggingEngines { get; private set; }
 
         [JsonIgnore]
         public bool UseCustomDebuggingEngines
