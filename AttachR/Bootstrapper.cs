@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using AttachR.Commands;
@@ -77,9 +76,7 @@ namespace AttachR
         private static void RegisterKeyCombination(EventHandler<HotkeyEventArgs> handler, string shortcut, string name)
         {
             var startCombination = KeyCombinationConverter.ParseShortcut(shortcut);
-            Key key;
-            ModifierKeys modifiers;
-            startCombination.CombinationToShortcut(out key, out modifiers);
+            startCombination.CombinationToShortcut(out var key, out var modifiers);
             TryRegisterHotkey(name, key, modifiers, handler);
         }
 

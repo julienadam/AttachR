@@ -16,7 +16,7 @@
             <RowDefinition Height="*"/>
             <RowDefinition Height="40"/>
         </Grid.RowDefinitions>
-        
+
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="100"/>
@@ -37,16 +37,12 @@
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
 
-                <!--<Grid.Resources>
-                    <views:DebugDataBindingConverter x:Key="DebugBinding"/>
-                </Grid.Resources>-->
-
                 <Label Grid.Column="0" Grid.Row="0">Start all selected without debugging</Label>
                 <keyboard:KeyCombinationInput Grid.Column="1" Grid.Row="0" Margin="3" x:Name="KeyStartAll" KeyCombination="{Binding Path=StartAllShortcut, Mode=TwoWay}" ToolTip="Click on the box then press the shortcut you want to register" />
-                
+
                 <Label Grid.Column="0" Grid.Row="1">Debug all selected</Label>
                 <keyboard:KeyCombinationInput Grid.Column="1" Grid.Row="1" Margin="3" x:Name="KeyDebugAll" KeyCombination="{Binding Path=DebugAllShortcut, Mode=TwoWay}" ToolTip="Click on the box then press the shortcut you want to register"/>
-                
+
                 <Label Grid.Column="0" Grid.Row="2">Stop all</Label>
                 <keyboard:KeyCombinationInput Grid.Column="1" Grid.Row="2" Margin="3" x:Name="KeyStopAll" KeyCombination="{Binding Path=StopAllShortcut, Mode=TwoWay}" ToolTip="Click on the box then press the shortcut you want to register"/>
             </Grid>

@@ -249,7 +249,7 @@ namespace AttachR.ViewModels
             FileOpenCore(recentItemClicked.Filepath);
         }
 
-        public void Preferences(object sender, RoutedEventArgs e)
+        public void EditPreferences(object sender, RoutedEventArgs e)
         {
             windowManager.ShowDialog(new PreferencesViewModel(aggregator, preferencesSerializer));
         }

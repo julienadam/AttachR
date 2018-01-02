@@ -15,7 +15,7 @@ namespace AttachR.Components.Keyboard
 
         public KeyCombination KeyCombination
         {
-            get { return (KeyCombination)GetValue(KeyCombinationProperty); }
+            get => (KeyCombination)GetValue(KeyCombinationProperty);
             set
             {
                 SetValue(KeyCombinationProperty, value);

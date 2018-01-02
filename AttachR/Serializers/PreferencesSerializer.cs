@@ -7,7 +7,8 @@ namespace AttachR.Serializers
 {
     public class PreferencesSerializer : IPreferencesSerializer
     {
-        private readonly string path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "AttachR", "preferences.json");
+        private static readonly string preferencesDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "AttachR");
+        private static readonly string path = Path.Combine(preferencesDirectory, "preferences.json");
 
         public Preferences Load()
         {
@@ -16,7 +17,7 @@ namespace AttachR.Serializers
 
         public void Save(Preferences model)
         {
-            Directory.CreateDirectory(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "AttachR"));
+            Directory.CreateDirectory(preferencesDirectory);
             File.WriteAllText(path, JsonConvert.SerializeObject(model, Formatting.Indented));
         }
     }

@@ -17,27 +17,26 @@ namespace AttachR.ViewModels
 
         public PreferencesViewModel([NotNull] IEventAggregator aggregator, [NotNull] IPreferencesSerializer preferencesSerializer)
         {
-            if (aggregator == null) throw new ArgumentNullException(nameof(aggregator));
-            if (preferencesSerializer == null) throw new ArgumentNullException(nameof(preferencesSerializer));
-            
-            this.aggregator = aggregator;
-            this.preferencesSerializer = preferencesSerializer;
+            this.aggregator = aggregator ?? throw new ArgumentNullException(nameof(aggregator));
+            this.preferencesSerializer = preferencesSerializer ?? throw new ArgumentNullException(nameof(preferencesSerializer));
         }
 
         protected override void OnViewAttached(object view, object context)
         {
-            base.OnViewAttached(view, context);
             var preferences = preferencesSerializer.Load();
             DebugAllShortcut = KeyCombinationConverter.ParseShortcut(preferences.DebugAllShortcut);
             StartAllShortcut = KeyCombinationConverter.ParseShortcut(preferences.StartAllShortcut);
             StopAllShortcut = KeyCombinationConverter.ParseShortcut(preferences.StopAllShortcut);
+
+            base.OnViewAttached(view, context);
+            // TODO: Unregister hotkeys
         }
-        
+
         private KeyCombination debugAllShortcut;
 
         public KeyCombination DebugAllShortcut
         {
-            get { return debugAllShortcut; }
+            get => debugAllShortcut;
             set
             {
                 if (Equals(value, debugAllShortcut)) return;
@@ -47,10 +46,10 @@ namespace AttachR.ViewModels
         }
 
         private KeyCombination startAllShortcut;
-        
+
         public KeyCombination StartAllShortcut
         {
-            get { return startAllShortcut; }
+            get => startAllShortcut;
             set
             {
                 if (Equals(value, startAllShortcut)) return;
@@ -60,10 +59,10 @@ namespace AttachR.ViewModels
         }
 
         private KeyCombination stopAllShortcut;
-        
+
         public KeyCombination StopAllShortcut
         {
-            get { return stopAllShortcut; }
+            get => stopAllShortcut;
             set
             {
                 if (Equals(value, stopAllShortcut)) return;
@@ -92,6 +91,7 @@ namespace AttachR.ViewModels
 
         public void Cancel()
         {
+            TryClose();
         }
     }
 }
